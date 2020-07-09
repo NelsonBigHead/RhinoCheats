@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "WritePackets.h"
 
+tPredictPlayerState oPredictPlayerState;
+tWritePacket oWritePacket;
+
 void AntiAim(usercmd_t* pCmd)
 {
 	/*if (Settings[aim_enabled].Value.bValue || Settings[aim_key].Value.iValue)
@@ -70,24 +73,23 @@ void InverseTroller(usercmd_t* pCmd)
 	}
 }
 
-void ClampMove(char* value)
+char ClampMove(char value)
 {
-	while (*value < -128)
-		*value = -128;
+	if (value < -128)
+		return -128;
 
-	while (*value > 127)
-		*value = 127;
+	if (value > 127)
+		return 127;
+
+	return value;
 }
 
 void MovementFix(usercmd_t* usercmd, float yaw, float oldyaw, float forward, float right)
 {
 	float flDelta = DegreesToRadians(yaw - oldyaw);
 
-	usercmd->forwardmove = (char)(cosf(flDelta) * forward - sinf(flDelta) * right);
-	usercmd->rightmove = (char)(sinf(flDelta) * forward + cosf(flDelta) * right);
-
-	ClampMove(&usercmd->forwardmove);
-	ClampMove(&usercmd->rightmove);
+	usercmd->forwardmove = ClampMove((char)(cosf(flDelta) * forward - sinf(flDelta) * right));
+	usercmd->rightmove = ClampMove((char)(sinf(flDelta) * forward + cosf(flDelta) * right));
 }
 
 void DoCurCmd(usercmd_t *curCmd, int seed)
@@ -118,34 +120,85 @@ void DoNextCmd(usercmd_t* nextCmd)
 
 
 /************************************************************************/
-/* WritePacket                                                          */
+/* PredictPlayerState                                                   */
 /************************************************************************/
 
-void WritePacket()
+int HOOKCALL hPredictPlayerState(int a1)
 {
 	if (cg)
 	{
-#pragma region usercmd	
-		/*usercmd_t *curCmd = pinput->GetUserCmd(pinput->currentCmdNum);
-		pinput->currentCmdNum += 1;
-		usercmd_t *nextCmd = pinput->GetUserCmd(pinput->currentCmdNum);
-		*nextCmd = *curCmd;
-		curCmd->servertime -= 1;*/
+		static int backupAngles[3];
 
-		usercmd_t* curCmd = pinput->GetUserCmd(pinput->currentCmdNum - 1);
-		usercmd_t* nextCmd = pinput->GetUserCmd(pinput->currentCmdNum);
-		*curCmd = *nextCmd;
+		usercmd_t* oldCmd = pinput->GetUserCmd(pinput->currentCmdNum - 1);
+		usercmd_t* curCmd = pinput->GetUserCmd(pinput->currentCmdNum);
+		usercmd_t* newCmd = pinput->GetUserCmd(pinput->currentCmdNum + 1);
+
+		*newCmd = *curCmd;
+		++pinput->currentCmdNum;
+
+		VectorCopy(backupAngles, oldCmd->viewangles);
+		VectorCopy(curCmd->viewangles, backupAngles);
+
+		++oldCmd->servertime;
 		--curCmd->servertime;
-#pragma endregion curCmd for silent spread/aim, nextCmd for anti aim		
-
 
 		if (!Aim.isVehicle &&
 			cg_entities[cg->clientNum].valid && (cg_entities[cg->clientNum].IsAlive & 1))
 		{
-			DoCurCmd(curCmd, curCmd->servertime);
-			DoNextCmd(nextCmd);
+			if (Settings[silent_aim].Value.bValue && Aim.isReady[Aim_t::isReadyforFire] && !Settings[third_person].Value.bValue)
+			{
+				//-= doesn't work
+				float flOldYaw = SHORT2ANGLE(oldCmd->viewangles[1]);
+
+				oldCmd->viewangles[1] += ANGLE2SHORT(Aim.vAimAngles[1]);
+				oldCmd->viewangles[0] += ANGLE2SHORT(Aim.vAimAngles[0]);
+
+				MovementFix(oldCmd, SHORT2ANGLE(oldCmd->viewangles[1]), flOldYaw, oldCmd->forwardmove, oldCmd->rightmove);
+			}
+
+			if (Settings[auto_shoot].Value.bValue && Aim.isReady[Aim_t::isReadyforFire])
+				oldCmd->buttons |= BUTTON_FIRE;
 		}
 
-		Aim.Autoshoot();
+		Nospread.ApplyNoSpread(oldCmd, oldCmd->servertime);
 	}
+
+	return oPredictPlayerState(a1);
+}
+
+
+
+/************************************************************************/
+/* WritePacket                                                          */
+/************************************************************************/
+
+int HOOKCALL hWritePacket(int a1)
+{
+	if (cg)
+	{
+		usercmd_t* curCmd = pinput->GetUserCmd(pinput->currentCmdNum);
+
+		if (Aim.isVehicle &&
+			cg_entities[cg->clientNum].valid && (cg_entities[cg->clientNum].IsAlive & 1))
+		{
+			if (Settings[silent_aim].Value.bValue && Aim.isReady[Aim_t::isReadyforFire] && !Settings[third_person].Value.bValue)
+			{
+				//-= doesn't work
+				float flOldYaw = SHORT2ANGLE(curCmd->viewangles[1]);
+
+				curCmd->viewangles[1] += ANGLE2SHORT(Aim.vAimAngles[1]);
+				curCmd->viewangles[0] += ANGLE2SHORT(Aim.vAimAngles[0]);
+
+				MovementFix(curCmd, SHORT2ANGLE(curCmd->viewangles[1]), flOldYaw, curCmd->forwardmove, curCmd->rightmove);
+			}
+
+			if (Settings[auto_shoot].Value.bValue && Aim.isReady[Aim_t::isReadyforFire])
+				curCmd->buttons |= BUTTON_FIRE;
+		}
+
+		AntiAim(curCmd);
+		InverseTroller(curCmd);
+	}
+
+	return oWritePacket(a1);
 }

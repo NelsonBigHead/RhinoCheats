@@ -68,6 +68,9 @@ DWORD Offsets::server_health = NULL;
 DWORD Offsets::playerdie = NULL;
 DWORD Offsets::key_input = NULL;
 
+DWORD Offsets::predictplayerstate = NULL;
+DWORD Offsets::writepacket = NULL;
+
 DWORD Offsets::HUDSAYPOSITION_DVAR = NULL;
 DWORD Offsets::HUDSAYPOSITION_EXCEPTION = NULL;
 DWORD Offsets::PACKETDUPLICATION_DVAR = NULL;

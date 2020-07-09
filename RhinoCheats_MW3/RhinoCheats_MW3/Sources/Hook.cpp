@@ -430,6 +430,16 @@ void GetOffsets() {
 	Offsets::key_input = GET_INT(ki + 2);
 
 
+	DWORD pps = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x05\x00\x00\x00\x00\x83\xEC\x24", "xx????xxx");
+	XASSERT(pps);
+	Offsets::predictplayerstate = pps;
+
+
+	DWORD wp = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xB8\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x84\x24\x00\x00\x00\x00\x56\x8B", "x????x????xxx????xx");
+	XASSERT(wp);
+	Offsets::writepacket = wp;
+
+
 	DWORD sht = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\x8B\x44\x24\x04\x8B\x40\x04\xC3", "xxxxxxxx");
 	XASSERT(sht);
 	Offsets::strHeight = sht;
@@ -657,6 +667,8 @@ void GetPointers()
 	ServerHealth = (Health_s *)Offsets::server_health;
 
 	key_input = (KInput_t *)Offsets::key_input;
+	oPredictPlayerState = (tPredictPlayerState)Offsets::predictplayerstate;
+	oWritePacket = (tWritePacket)Offsets::writepacket;
 
 	//========================================================================
 
@@ -1020,12 +1032,19 @@ int __cdecl VM_Notify_Hook(int a1, unsigned int a2, unsigned int *a3) {
 	return VM_Notify(a1, a2, a3);
 }
 
+typedef int(__cdecl* tLiveGetSkills)(int a1, int a2);
+tLiveGetSkills oLiveGetSkills = (tLiveGetSkills)0x64EED0;
+int __cdecl hLiveGetSkills(int a1, int a2)
+{
+	return 0;
+}
+
 long __stdcall pVEH_Hook(_EXCEPTION_POINTERS *pInfo)
 {	
 	if (pInfo->ContextRecord->Eip == Offsets::PACKETDUPLICATION_EXCEPTION)
 	{
 		pInfo->ContextRecord->Ecx = /*0x59D6A20*/ 0x059DAA20; // check it live.
-		WritePacket();
+		//WritePacket();
 		return EXCEPTION_CONTINUE_EXECUTION;
 	}
 	else if (pInfo->ContextRecord->Eip == Offsets::HUDSAYPOSITION_EXCEPTION)
@@ -1179,10 +1198,13 @@ void Hook_t::ExecMainThread()
 		MakeJMP((BYTE *)/*0x0067EAE7*/ 0x0067EB47, (DWORD)h_client_crasher_fix, 0x6);
 		MakeJMP((BYTE *)/*0x005021F3*/ 0x005022E3, (DWORD)h_endround_fix, 0x5);
 		HookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);
+		HookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
 	}	
 	
 	HookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook); //Console Fix		
 	HookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);//Background Effect	
+	HookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+	HookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 	
 
 	// Level 3
@@ -1190,10 +1212,15 @@ void Hook_t::ExecMainThread()
 	{
 		SafeMessageBox(HWND_DESKTOP, "Error! at Level 3", ALASKA17, MB_ICONERROR);		
 
-		if (!isTekno)		
+		if (!isTekno)
+		{
 			UnHookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);
+			UnHookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
+		}
 		UnHookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook);
-		UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);					
+		UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
+		UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+		UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 		exit(-1);
 	} 	
@@ -1220,9 +1247,14 @@ void Hook_t::ExecMainThread()
 				RemoveVectoredExceptionHandler(pVEH_Hook);
 
 				if (!isTekno)
+				{
 					UnHookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);
+					UnHookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
+				}
 				UnHookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook);
-				UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);				
+				UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
+				UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+				UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 				D3D::Restore_WndProc();
 
@@ -1242,9 +1274,14 @@ void Hook_t::ExecMainThread()
 			RemoveVectoredExceptionHandler(pVEH_Hook);
 
 			if (!isTekno)
+			{
 				UnHookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);
+				UnHookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
+			}
 			UnHookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook);
 			UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
+			UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+			UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 			D3D::Restore_WndProc();
 
@@ -1272,9 +1309,14 @@ void Hook_t::ExecCleaningThread()
 	RemoveVectoredExceptionHandler(pVEH_Hook);	
 
 	if (!isTekno)
+	{
 		UnHookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);
+		UnHookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
+	}
 	UnHookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook);
 	UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
+	UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+	UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 	D3D::Restore_WndProc();
 
