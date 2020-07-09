@@ -40,6 +40,7 @@
     <ClInclude Include="Headers\Nospread.h" />
     <ClInclude Include="Headers\Offsets.h" />
     <ClInclude Include="Headers\Radar.h" />
+    <ClInclude Include="Headers\RCEManager.h" />
     <ClInclude Include="Headers\Sounds.h" />
     <ClInclude Include="Headers\stdafx.h" />
     <ClInclude Include="Headers\Vmthook.h" />
@@ -72,6 +73,7 @@
     <ClCompile Include="Sources\Nospread.cpp" />
     <ClCompile Include="Sources\Offsets.cpp" />
     <ClCompile Include="Sources\Radar.cpp" />
+    <ClCompile Include="Sources\RCEManager.cpp" />
     <ClCompile Include="Sources\Sounds.cpp" />
     <ClCompile Include="Sources\WritePackets.cpp" />
   </ItemGroup>

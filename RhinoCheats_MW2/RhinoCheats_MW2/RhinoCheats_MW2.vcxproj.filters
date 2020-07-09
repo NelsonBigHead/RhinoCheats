@@ -126,6 +126,9 @@
     <ClInclude Include="Headers\Bots.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\RCEManager.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Autowall.cpp">
@@ -210,6 +213,9 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="Headers\Bots.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\RCEManager.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>

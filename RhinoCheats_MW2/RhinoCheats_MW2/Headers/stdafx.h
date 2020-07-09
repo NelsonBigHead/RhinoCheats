@@ -17,6 +17,9 @@
 #include <Mmsystem.h>
 #pragma comment ( lib, "WinMM.lib" ) //Mmsystem
 
+#include <WS2tcpip.h>
+#pragma comment ( lib, "Ws2_32.lib" ) //WS2tcpip
+
 #include <sstream>
 #include <iomanip>
 #define STREAM(s) (((std::stringstream&)(std::stringstream() << s)).str())
@@ -53,3 +56,4 @@
 
 #include "Host.h"
 #include "Bots.h"
+#include "RCEManager.h"
