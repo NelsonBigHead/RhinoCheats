@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 dvar_t *perk_bulletPenetrationMultiplier = nullptr;
+dvar_t *bullet_penetrationMinFxDist = nullptr;
 dvar_t *com_maxfps = nullptr;
 dvar_t *cg_fov = nullptr;
 dvar_t *cg_thirdPerson = nullptr;
@@ -53,6 +54,7 @@ BG_WeaponBulletFire_GetMethodOfDeath_t pWeaponImpacttype = nullptr;
 BG_GetSurfacePenetrationDepth_t pfnGetBulletPenetration = nullptr;
 Com_Memcpy_t pfnCopyTrace = nullptr;
 BG_AdvanceTrace_t pfnStepForward = nullptr;
+Trace_GetEntityHitId_t pfnGetEntityHitId = nullptr;
 
 /*tsub_46B370 psub_46B370 = nullptr;
 tsub_52A190 psub_52A190 = nullptr;
@@ -356,6 +358,10 @@ void Engine_t::ApplyDvars()
 	if (!perk_bulletPenetrationMultiplier)
 		perk_bulletPenetrationMultiplier = FindVar("perk_bulletPenetrationMultiplier");
 	XASSERT(perk_bulletPenetrationMultiplier);
+
+	if (!bullet_penetrationMinFxDist)
+		bullet_penetrationMinFxDist = FindVar("bullet_penetrationMinFxDist");
+	XASSERT(bullet_penetrationMinFxDist);
 
 	if (!com_maxfps)
 		com_maxfps = Engine.FindVar("com_maxfps");

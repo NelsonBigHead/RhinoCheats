@@ -516,6 +516,8 @@ delta + old_server_entityinfo = new_server_entityinfo
 	
 	Offsets::m_addr_StepForward = 0x479A80;
 
+	Offsets::m_addr_GetEntityHitId = 0x55D550;
+
 	
 	Offsets::punch = 0x914D7C;
 
@@ -572,6 +574,7 @@ void GetPointers()
 	pfnGetBulletPenetration = (BG_GetSurfacePenetrationDepth_t)(Offsets::m_addr_GetPenetrationPower);
 	pfnCopyTrace = (Com_Memcpy_t)(Offsets::m_addr_CopyTrace);
 	pfnStepForward = (BG_AdvanceTrace_t)(Offsets::m_addr_StepForward);
+	pfnGetEntityHitId = (Trace_GetEntityHitId_t)(Offsets::m_addr_GetEntityHitId);
 
 	/*psub_46B370 = (tsub_46B370)Offsets::awallcheck_1;
 	psub_52A190 = (tsub_52A190)Offsets::awallcheck_2;

@@ -284,9 +284,13 @@ void GetOffsets() {
 	XASSERT(xynf19);
 	Offsets::m_addr_StepForward = xynf19;
 
-	DWORD xynf20 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x1D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x15\x00\x00\x00\x00\x8B\xF0", "xx????x????xx????xx");
+	DWORD xynf20 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\x8B\x4C\x24\x04\x8B\x41\x1C\x83\xF8\x02\x74", "xxxxxxxxxxx");
 	XASSERT(xynf20);
-	Offsets::punch = GET_INT(xynf20 + 2);
+	Offsets::m_addr_GetEntityHitId = xynf20;
+
+	DWORD xynf21 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x1D\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x15\x00\x00\x00\x00\x8B\xF0", "xx????x????xx????xx");
+	XASSERT(xynf21);
+	Offsets::punch = GET_INT(xynf21 + 2);
 
 
 	DWORD xb1 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\x8B\x35\x00\x00\x00\x00\xD9\x46\x10\xE8\x00\x00\x00\x00\xD9\x46\x0C", "xx????xxxx????xxx");
@@ -693,7 +697,8 @@ void GetPointers()
 	pWeaponImpacttype = (BG_WeaponBulletFire_GetMethodOfDeath_t)Offsets::weaponimpacttype;
 	pfnGetBulletPenetration = (BG_GetSurfacePenetrationDepth_t)(Offsets::m_addr_GetPenetrationPower);
 	pfnCopyTrace = (Com_Memcpy_t)(Offsets::m_addr_CopyTrace);
-	pfnStepForward = (BG_AdvanceTrace_t)(Offsets::m_addr_StepForward);	
+	pfnStepForward = (BG_AdvanceTrace_t)(Offsets::m_addr_StepForward);
+	pfnGetEntityHitId = (Trace_GetEntityHitId_t)(Offsets::m_addr_GetEntityHitId);
 
 	psub_4F0CF0 = (tsub_4F0CF0)Offsets::awallcheck_1;
 	psub_489F70 = (tsub_4F0CF0)Offsets::awallcheck_2;

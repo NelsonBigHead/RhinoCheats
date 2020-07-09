@@ -739,6 +739,7 @@ typedef struct {
 extern Punch_t *punch;
 
 extern dvar_s *perk_bulletPenetrationMultiplier;
+extern dvar_s * bullet_penetrationMinFxDist;
 extern dvar_s *com_maxfps;
 extern dvar_s *cg_fov;
 extern dvar_s *cg_thirdPerson;

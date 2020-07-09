@@ -59,6 +59,7 @@ DWORD Offsets::m_addr_TraceBullet = NULL;
 DWORD Offsets::m_addr_GetPenetrationPower = NULL;
 DWORD Offsets::m_addr_CopyTrace = NULL;
 DWORD Offsets::m_addr_StepForward = NULL;
+DWORD Offsets::m_addr_GetEntityHitId = NULL;
 DWORD Offsets::awallcheck_1 = NULL;
 DWORD Offsets::awallcheck_2 = NULL;
 DWORD Offsets::awallcheck_3 = NULL;

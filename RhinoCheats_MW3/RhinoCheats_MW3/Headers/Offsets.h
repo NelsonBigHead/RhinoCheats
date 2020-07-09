@@ -60,6 +60,7 @@ public:
 	static DWORD m_addr_GetPenetrationPower;
 	static DWORD m_addr_CopyTrace;
 	static DWORD m_addr_StepForward;
+	static DWORD m_addr_GetEntityHitId;
 	static DWORD awallcheck_1;
 	static DWORD awallcheck_2;
 	static DWORD awallcheck_3;

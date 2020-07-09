@@ -13,6 +13,7 @@ float Autowall_t::GetRemainingPower(vec3_t start, vec3_t end, centity_t* ent)
 	ZeroMemory(&tr_enter, sizeof(trace_t));
 
 	VectorSubtract(end, start, bl_enter.dir);
+	float length = Math.VectorLength(bl_enter.dir);
 	VectorNormalize(bl_enter.dir);
 
 	bl_enter.worldEntNum = ENTITYNUM_WORLD;
@@ -28,7 +29,9 @@ float Autowall_t::GetRemainingPower(vec3_t start, vec3_t end, centity_t* ent)
 
 	if (did_hit)
 	{
-		int surfaces = 0;
+		if (pfnGetEntityHitId(&tr_enter) == ent->nextState.number)
+			return bl_enter.damageMultiplier;
+
 		float pen_depth = 0.0f;
 		float pen_depth2 = 0.0f;
 		float wall_depth = 0.0f;
@@ -36,8 +39,9 @@ float Autowall_t::GetRemainingPower(vec3_t start, vec3_t end, centity_t* ent)
 		BulletFireParams bl_exit;
 		trace_t tr_exit;
 		vec3_t end_pos = { 0.0f };
+		vec3_t temp = { 0.0f };
 
-		while (true)
+		for (int surfaces = 0; did_hit && surfaces < 5; ++surfaces)
 		{
 			pen_depth = pfnGetBulletPenetration(cg_entities[cg->clientNum].nextState.weaponID, 0, tr_enter.materialType);
 
@@ -50,6 +54,10 @@ float Autowall_t::GetRemainingPower(vec3_t start, vec3_t end, centity_t* ent)
 
 			// Save the trace's endpos.
 			VectorCopy(tr_enter.endpos, end_pos);
+			VectorSubtract(end_pos, bl_enter.start, temp);
+
+			if (Math.VectorLength(temp) >= length)
+				return bl_enter.damageMultiplier;
 
 			// Step into the hit wall.
 			if (!StepForward(&bl_enter, &tr_enter, 0.13500001f))
@@ -99,19 +107,32 @@ float Autowall_t::GetRemainingPower(vec3_t start, vec3_t end, centity_t* ent)
 
 				if (bl_enter.damageMultiplier <= 0.0f)
 					return 0.0f;
+
+				if (!inv_solid)
+				{
+					vec3_t dir = { 0.0f };
+
+					VectorSubtract(tr_exit.endpos, tr_enter.endpos, dir);
+
+					if (DotProduct(dir, dir) > bullet_penetrationMinFxDist->u6.fval * bullet_penetrationMinFxDist->u6.fval)
+					{
+						if (!did_hit)
+							return bl_enter.damageMultiplier;
+					}
+
+					if (pfnGetEntityHitId(&tr_exit) == ent->nextState.number)
+						return bl_enter.damageMultiplier;
+				}
 			}
 
 			else if (!did_hit)
 				return bl_enter.damageMultiplier;
 
-			if (did_hit)
-			{
-				if (++surfaces < 5)
-					continue;
-			}
-
-			return 0.0f;
+			if (pfnGetEntityHitId(&tr_enter) == ent->nextState.number)
+				return bl_enter.damageMultiplier;
 		}
+
+		return 0.0f;
 	}
 
 	return bl_enter.damageMultiplier;

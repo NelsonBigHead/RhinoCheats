@@ -63,6 +63,9 @@ extern Com_Memcpy_t pfnCopyTrace;
 typedef bool(__cdecl *BG_AdvanceTrace_t)(BulletFireParams* a1, trace_t* a2, float a3);
 extern BG_AdvanceTrace_t pfnStepForward;
 
+typedef int(__cdecl* Trace_GetEntityHitId_t)(trace_t* a1);
+extern Trace_GetEntityHitId_t pfnGetEntityHitId;
+
 typedef int(__cdecl *tsub_46B370)(unsigned int a1, int a2);
 extern tsub_46B370 psub_46B370;
 typedef bool(__cdecl *tsub_52A190)(void *a1, unsigned int a2, int a3);

@@ -673,11 +673,9 @@ namespace Host
 
 			perk_bulletPenetrationMultiplier->u6.fval = 30.0f;
 
-			dvar_s* pAwall = Engine.FindVar("bullet_penetrationMinFxDist");
-			XASSERT(pAwall);
-			pAwall->u6.fval = 1024;
+			bullet_penetrationMinFxDist->u6.fval = 1024.0f;
 
-			pAwall = Engine.FindVar("dynEnt_bulletForce");
+			dvar_s* pAwall = Engine.FindVar("dynEnt_bulletForce");
 			XASSERT(pAwall);
 			pAwall->u6.fval = FLT_MAX;
 
@@ -691,11 +689,9 @@ namespace Host
 		{
 			perk_bulletPenetrationMultiplier->u6.fval = 2.0f;
 
-			dvar_s* pAwall = Engine.FindVar("bullet_penetrationMinFxDist");
-			XASSERT(pAwall);
-			pAwall->u6.fval = 30.0f;
+			bullet_penetrationMinFxDist->u6.fval = 30.0f;
 
-			pAwall = Engine.FindVar("dynEnt_bulletForce");
+			dvar_s* pAwall = Engine.FindVar("dynEnt_bulletForce");
 			XASSERT(pAwall);
 			pAwall->u6.fval = 1000.0f;
 
