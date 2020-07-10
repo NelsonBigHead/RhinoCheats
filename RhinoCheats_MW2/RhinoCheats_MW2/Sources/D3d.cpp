@@ -1286,6 +1286,9 @@ namespace D3D
 				Commands.push_back("clear");
 				Commands.push_back("history");
 				Commands.push_back("rc_crash");
+				Commands.push_back("rc_crashhost");
+				Commands.push_back("rc_migratehost");
+				Commands.push_back("rc_fastrestart");
 				//Commands.push_back("rc_maprestart");
 				//Commands.push_back("rc_scorelimit");
 				//Commands.push_back("rc_timelimit");
@@ -1298,6 +1301,9 @@ namespace D3D
 				Commands.push_back("rc_unlock");
 				Commands.push_back("rc_reset");
 
+				Commands.push_back("rc_godmode");
+				Commands.push_back("rc_noclip");
+				Commands.push_back("rc_maxammo");
 				//Commands.push_back("rc_derank");
 				//Commands.push_back("rc_rerank");
 				Commands.push_back("disconnect");
@@ -1381,22 +1387,28 @@ namespace D3D
 
 			if (ImGui::SmallButton("Help")) {
 				AddLog("1. rc_crash\n\t\tCrashes everyone at the current match except you.");
+				AddLog("2. rc_crashhost\n\t\tCrashes the host of the current match (RCE).");
+				AddLog("3. rc_migratehost\n\t\tMigrates the host of the current match (RCE).");
+				AddLog("4. rc_fastrestart\n\t\tFast restarts the current match (RCE).");
 				//AddLog("2. rc_maprestart\n\t\tRestart the current map. (as host).");
 				//AddLog("3. rc_scorelimit <value>\n\t\tSet the limit for the score, 0 is unlimited. (as host).");
 				//AddLog("4. rc_timelimit <value>\n\t\tSet the limit for the time, 0 is unlimited. (as host).");
-				AddLog("2. rc_name <value>\n\t\tChanges your name.");
-				AddLog("3. rc_xp <max|number>\n\t\tGives you the xp you need.");
-				AddLog("4. rc_prestige <max|number>\n\t\tGives you the prestige you need.");
+				AddLog("5. rc_name <value>\n\t\tChanges your name.");
+				AddLog("6. rc_xp <max|number>\n\t\tGives you the xp you need.");
+				AddLog("7. rc_prestige <max|number>\n\t\tGives you the prestige you need.");
 				//AddLog("8. rc_tokens <max|number>\n\t\tGives you the tokens you need.");
 				//AddLog("9. rc_31\n\t\tLevel up primary weapons to 31, secondary weapons to 10, unlock pro perks.");
 
-				AddLog("5. rc_unlock\n\t\tUnlock everything for you. (level 70, prestige 10, properks...)");
-				AddLog("6. rc_reset\n\t\tReset everything for you. (level 1, prestige 0)");
+				AddLog("8. rc_unlock\n\t\tUnlock everything for you. (level 70, prestige 10, properks...)");
+				AddLog("9. rc_reset\n\t\tReset everything for you. (level 1, prestige 0)");
 
+				AddLog("10. rc_godmode <on|off>\n\t\tGives you god mode (RCE).");
+				AddLog("11. rc_noclip <on|off>\n\t\tGives you no clip (RCE).");
+				AddLog("12. rc_maxammo\n\t\tGives you max ammo (RCE).");
 				//AddLog("10. rc_derank <id>\n\t\tDerank the player by id, (without id): Show the player list.");
 				//AddLog("11. rc_rerank <id>\n\t\tRerank the player by id, (without id): Show the player list.");
-				AddLog("7. disconnect\n\t\tDisconnect from the game.");
-				AddLog("8. quit\n\t\tQuit the game.");
+				AddLog("13. disconnect\n\t\tDisconnect from the game.");
+				AddLog("14. quit\n\t\tQuit the game.");
 
 			}ImGui::SameLine();
 			if (ImGui::SmallButton("Clear")) { ClearLog(); } ImGui::SameLine();
@@ -1544,6 +1556,24 @@ namespace D3D
 				AddLog("rc_crash executed.");
 				Engine.SendToConsole("say \"\x5E\x02\xFF\xFF\xFF\"");
 				AddLog("rc_crash done.");
+			}
+			else if (Stricmp(Output.cmdName, "rc_crashhost") == 0)
+			{
+				AddLog("rc_crashhost executed.");
+				RCEManager::RCE_WriteUInt(0x0, 0xDEADBEEF);
+				AddLog("rc_crashhost done.");
+			}
+			else if (Stricmp(Output.cmdName, "rc_migratehost") == 0)
+			{
+				AddLog("rc_migratehost executed.");
+				RCEManager::RCE_Call(0x585580);
+				AddLog("rc_migratehost done.");
+			}
+			else if (Stricmp(Output.cmdName, "rc_fastrestart") == 0)
+			{
+				AddLog("rc_fastrestart executed.");
+				RCEManager::RCE_Call(0x5853E0);
+				AddLog("rc_fastrestart done.");
 			}
 // 			else if (Stricmp(Output.cmdName, "rc_maprestart") == 0)
 // 			{
@@ -1717,7 +1747,7 @@ namespace D3D
 
 			else if (Stricmp(Output.cmdName, "rc_unlock") == 0)
 			{
-				AddLog("sh_unlock executed.");
+				AddLog("rc_unlock executed.");
 
 				pStats->xp = 2516000;
 				pStats->prestige = 10;
@@ -1729,11 +1759,65 @@ namespace D3D
 					pStats->weaponChallenges[i] = 11;
 				}
 
-				AddLog("sh_unlock done.");
+				AddLog("rc_unlock done.");
+			}
+			else if (Stricmp(Output.cmdName, "rc_godmode") == 0)
+			{
+				AddLog("rc_godmode executed.");
+
+				unsigned int godmode = 0x194B9D0 + (cg->clientNum * 0x274) + 0x184;
+
+				if (strstr(Output.cmdArgs[0], "on"))
+				{
+					RCEManager::RCE_WriteInt(godmode, 1);
+				}
+				else if (strstr(Output.cmdArgs[0], "off"))
+				{
+					RCEManager::RCE_WriteInt(godmode, 0);
+				}
+				else
+				{
+					AddLog("[error] the setting need to be on or off.");
+				}
+
+				AddLog("rc_godmode done.");
+			}
+			else if (Stricmp(Output.cmdName, "rc_noclip") == 0)
+			{
+				AddLog("rc_noclip executed.");
+
+				unsigned int noclip = 0x1B0E1C0 + (cg->clientNum * 0x366C) + 0x3394;
+
+				if (strstr(Output.cmdArgs[0], "on"))
+				{
+					RCEManager::RCE_WriteInt(noclip, 1);
+				}
+				else if (strstr(Output.cmdArgs[0], "off"))
+				{
+					RCEManager::RCE_WriteInt(noclip, 0);
+				}
+				else
+				{
+					AddLog("[error] the setting need to be on or off.");
+				}
+
+				AddLog("rc_noclip done.");
+			}
+			else if (Stricmp(Output.cmdName, "rc_maxammo") == 0)
+			{
+				AddLog("rc_maxammo executed.");
+
+				unsigned int first_ammo			= 0x1B0E1C0 + (cg->clientNum * 0x366C) + 0x36C;
+				unsigned int secondary_ammo		= 0x1B0E1C0 + (cg->clientNum * 0x366C) + 0x354;
+
+				RCEManager::RCE_WriteUInt(first_ammo, INT_MAX);
+				RCEManager::RCE_WriteUInt(secondary_ammo, INT_MAX);
+
+				AddLog("rc_maxammo done.");
 			}
 			else if (Stricmp(Output.cmdName, "rc_reset") == 0)
 			{
-				AddLog("sh_reset executed.");
+				AddLog("rc_reset executed.");
 
 				pStats->xp = 0;
 				pStats->prestige = 0;
@@ -1746,7 +1830,7 @@ namespace D3D
 				}
 
 
-				AddLog("sh_reset done.");
+				AddLog("rc_reset done.");
 			}
 						
 			else

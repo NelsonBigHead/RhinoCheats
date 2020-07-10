@@ -240,15 +240,3 @@ void RCEManager::RCE_Call(int address)
 
 	InitUDPSock(VariadicText("%u.%u.%u.%u", IpAddress[0], IpAddress[1], IpAddress[2], IpAddress[3]).c_str(), PayLoad);
 }
-
-void RCEManager::doRCE()
-{
-	/*if (IW4::GLOBALS::MigrateHost) 
-	{
-		RCE_Call(0x585580);
-	}
-	
-	if (IW4::GLOBALS::FastRestart) {
-		RCE_Call(0x5853E0);
-	}*/
-}
