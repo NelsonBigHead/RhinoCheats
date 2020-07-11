@@ -303,6 +303,31 @@ void GetOffsets() {
 	XASSERT(xb2);
 	Offsets::PACKETDUPLICATION_DVAR = GET_INT(xb2 + 2);
 	Offsets::PACKETDUPLICATION_EXCEPTION = xb2 + 6;
+
+
+	DWORD xb3 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\x8B\x15\x00\x00\x00\x00\xD9\xC9\xD9\x5C", "xx????xxxx");
+	XASSERT(xb3);
+	Offsets::SMOOTHINGTIME_DVAR = GET_INT(xb3 + 2);
+
+
+	DWORD xb4 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x42\x0C\x89\x44", "xxxxx");
+	XASSERT(xb4);
+	Offsets::SMOOTHINGTIME_EXCEPTION_1 = xb4;
+
+
+	DWORD xb5 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x41\x0C\xDC\x0D\x00\x00\x00\x00\xDE\xD9\xDF\xE0\xF6\xC4\x05\x7A\x24", "xxxxx????xxxxxxxxx");
+	XASSERT(xb5);
+	Offsets::SMOOTHINGTIME_EXCEPTION_2 = xb5;
+
+
+	DWORD xb6 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x40\x0C\xEB\xCD", "xxxxx");
+	XASSERT(xb6);
+	Offsets::SMOOTHINGTIME_EXCEPTION_3 = xb6;
+
+
+	DWORD xb7 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x40\x0C\x89\x7C", "xxxxx");
+	XASSERT(xb7);
+	Offsets::SMOOTHINGTIME_EXCEPTION_4 = xb7;
 	
 	/*if (!isTekno)
 	{	
@@ -432,16 +457,6 @@ void GetOffsets() {
 	DWORD ki = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\x81\xC6\x00\x00\x00\x00\xF7\x05\x00\x00\x00\x00\x00\x00\x00\x00\x0F\x85\x00\x00\x00\x00", "xx????xx????????xx????");
 	XASSERT(ki);
 	Offsets::key_input = GET_INT(ki + 2);
-
-
-	DWORD pps = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x05\x00\x00\x00\x00\x83\xEC\x24", "xx????xxx");
-	XASSERT(pps);
-	Offsets::predictplayerstate = pps;
-
-
-	DWORD wp = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xB8\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x84\x24\x00\x00\x00\x00\x56\x8B", "x????x????xxx????xx");
-	XASSERT(wp);
-	Offsets::writepacket = wp;
 
 
 	DWORD sht = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\x8B\x44\x24\x04\x8B\x40\x04\xC3", "xxxxxxxx");
@@ -671,8 +686,6 @@ void GetPointers()
 	ServerHealth = (Health_s *)Offsets::server_health;
 
 	key_input = (KInput_t *)Offsets::key_input;
-	oPredictPlayerState = (tPredictPlayerState)Offsets::predictplayerstate;
-	oWritePacket = (tWritePacket)Offsets::writepacket;
 
 	//========================================================================
 
@@ -916,6 +929,7 @@ void SetNullPtrThread()
 	{
 		*(DWORD *)Offsets::PACKETDUPLICATION_DVAR = 0; //"cl_packetdup"	
 		*(DWORD *)Offsets::HUDSAYPOSITION_DVAR = 0; //"cg_hudSayPosition"			
+		*(DWORD *)Offsets::SMOOTHINGTIME_DVAR = 0; //"cg_viewZSmoothingTime"
 
 		SafeSleep(5017);
 	}
@@ -1044,18 +1058,43 @@ int __cdecl hLiveGetSkills(int a1, int a2)
 	return 0;
 }
 
+DWORD PACKETDUPLICATION_BACKUP;
+DWORD HUDSAYPOSITION_BACKUP;
+DWORD SMOOTHINGTIME_BACKUP;
+
 long __stdcall pVEH_Hook(_EXCEPTION_POINTERS *pInfo)
 {	
 	if (pInfo->ContextRecord->Eip == Offsets::PACKETDUPLICATION_EXCEPTION)
 	{
-		pInfo->ContextRecord->Ecx = /*0x59D6A20*/ 0x059DAA20; // check it live.
-		//WritePacket();
+		pInfo->ContextRecord->Ecx = PACKETDUPLICATION_BACKUP;
+		WritePacket();
 		return EXCEPTION_CONTINUE_EXECUTION;
 	}
 	else if (pInfo->ContextRecord->Eip == Offsets::HUDSAYPOSITION_EXCEPTION)
 	{
-		pInfo->ContextRecord->Esi = /*0x59D60EC*/ 0x059DA0EC;
+		pInfo->ContextRecord->Esi = HUDSAYPOSITION_BACKUP;
 		RenderAll();
+		return EXCEPTION_CONTINUE_EXECUTION;
+	}
+	else if (pInfo->ContextRecord->Eip == Offsets::SMOOTHINGTIME_EXCEPTION_1)
+	{
+		pInfo->ContextRecord->Edx = SMOOTHINGTIME_BACKUP;
+		return EXCEPTION_CONTINUE_EXECUTION;
+	}
+	else if (pInfo->ContextRecord->Eip == Offsets::SMOOTHINGTIME_EXCEPTION_2)
+	{
+		pInfo->ContextRecord->Ecx = SMOOTHINGTIME_BACKUP;
+		return EXCEPTION_CONTINUE_EXECUTION;
+	}
+	else if (pInfo->ContextRecord->Eip == Offsets::SMOOTHINGTIME_EXCEPTION_3)
+	{
+		pInfo->ContextRecord->Eax = SMOOTHINGTIME_BACKUP;
+		PredictPlayerState();
+		return EXCEPTION_CONTINUE_EXECUTION;
+	}
+	else if (pInfo->ContextRecord->Eip == Offsets::SMOOTHINGTIME_EXCEPTION_4)
+	{
+		pInfo->ContextRecord->Eax = SMOOTHINGTIME_BACKUP;
 		return EXCEPTION_CONTINUE_EXECUTION;
 	}
 	
@@ -1208,8 +1247,6 @@ void Hook_t::ExecMainThread()
 	
 	HookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook); //Console Fix		
 	HookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);//Background Effect	
-	HookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
-	HookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 	
 
 	// Level 3
@@ -1224,8 +1261,6 @@ void Hook_t::ExecMainThread()
 		}
 		UnHookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook);
 		UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
-		UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
-		UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 		exit(-1);
 	} 	
@@ -1233,6 +1268,11 @@ void Hook_t::ExecMainThread()
  	else
  	{
 		AddVectoredExceptionHandler(17, pVEH_Hook);
+
+		PACKETDUPLICATION_BACKUP = *(DWORD*)Offsets::PACKETDUPLICATION_DVAR;
+		HUDSAYPOSITION_BACKUP = *(DWORD*)Offsets::HUDSAYPOSITION_DVAR;
+		SMOOTHINGTIME_BACKUP = *(DWORD*)Offsets::SMOOTHINGTIME_DVAR;
+
 		SetNullPtrThreadHandle = SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(SetNullPtrThread), nullptr, 0, nullptr);
 		if (SetNullPtrThreadHandle)			
 		{ 
@@ -1258,8 +1298,6 @@ void Hook_t::ExecMainThread()
 				}
 				UnHookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook);
 				UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
-				UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
-				UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 				D3D::Restore_WndProc();
 
@@ -1285,8 +1323,6 @@ void Hook_t::ExecMainThread()
 			}
 			UnHookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook);
 			UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
-			UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
-			UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 			D3D::Restore_WndProc();
 
@@ -1309,8 +1345,11 @@ void Hook_t::ExecMainThread()
 void Hook_t::ExecCleaningThread()
 {	
 	FinishThread(SetNullPtrThreadHandle);
-	*(DWORD *)Offsets::PACKETDUPLICATION_DVAR = 0x059DAA20; //"cl_packetdup"	
-	*(DWORD *)Offsets::HUDSAYPOSITION_DVAR = 0x059DA0EC; //"cg_hudSayPosition"
+
+	*(DWORD *)Offsets::PACKETDUPLICATION_DVAR = PACKETDUPLICATION_BACKUP; //"cl_packetdup"	
+	*(DWORD *)Offsets::HUDSAYPOSITION_DVAR = HUDSAYPOSITION_BACKUP; //"cg_hudSayPosition"
+	*(DWORD *)Offsets::SMOOTHINGTIME_DVAR = SMOOTHINGTIME_BACKUP; //"cg_viewZSmoothingTime"
+
 	RemoveVectoredExceptionHandler(pVEH_Hook);	
 
 	if (!isTekno)
@@ -1320,8 +1359,6 @@ void Hook_t::ExecCleaningThread()
 	}
 	UnHookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook);
 	UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
-	UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
-	UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 	D3D::Restore_WndProc();
 

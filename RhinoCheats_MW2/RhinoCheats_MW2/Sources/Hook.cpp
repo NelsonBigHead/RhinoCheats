@@ -46,7 +46,15 @@
 		.text:004C0B48                 mov     ecx, dword_BC385C
 		.text:004C0B4E                 sub     eax, [ecx+0Ch]*/
 
-#define OFF_PACKETDUPLICATION_EXCEPTION 0x004C0B4E
+#define OFF_PACKETDUPLICATION_EXCEPTION 0x4C0B4E
+
+
+#define OFF_SMOOTHINGTIME_DVAR 0xAA6180
+
+#define OFF_SMOOTHINGTIME_EXCEPTION_1 0x4A2931
+#define OFF_SMOOTHINGTIME_EXCEPTION_2 0x4A2A1A
+#define OFF_SMOOTHINGTIME_EXCEPTION_3 0x4A2A34
+#define OFF_SMOOTHINGTIME_EXCEPTION_4 0x4ABB88
 
 /************************************************************************/
 /* Threads                                                              */
@@ -71,6 +79,7 @@ DWORD WINAPI SetNullPtrThread(void *unused)
 	{	
 		*(DWORD *)OFF_PACKETDUPLICATION_DVAR = 0; //"cl_packetdup"	
 		*(DWORD *)OFF_HUDSAYPOSITION_DVAR = 0; //"cg_hudSayPosition"			
+		*(DWORD *)OFF_SMOOTHINGTIME_DVAR = 0; //"cg_viewZSmoothingTime"
 
 		SafeSleep(5017);
 	}
@@ -399,9 +408,6 @@ delta + old_server_entityinfo = new_server_entityinfo
 	*/
 	Offsets::key_input = /*0xB382B0*/ 0xAB2B98;
 
-	Offsets::predictplayerstate = 0x4A2A70;
-	Offsets::writepacket = 0x4C0A10;
-
 
 	//iw5mp Base 400000 Size 68a5000 \x8B\x44\x24\x04\x8B\x40\x04\xC3 xxxxxxxx	                                 
 	Offsets::strHeight = /*0x5FD440*/ 0x40F7C0;
@@ -547,9 +553,6 @@ void GetPointers()
 	*/
 
 	key_input = (KInput_t *)Offsets::key_input;
-
-	oPredictPlayerState = (tPredictPlayerState)Offsets::predictplayerstate;
-	oWritePacket = (tWritePacket)Offsets::writepacket;
 
 	//========================================================================
 
@@ -795,22 +798,40 @@ int __cdecl VM_Notify_Hook(int a1, unsigned int a2, unsigned int *a3) {
 	return VM_Notify(a1, a2, a3);
 }*/
 
+DWORD PACKETDUPLICATION_BACKUP;
+DWORD HUDSAYPOSITION_BACKUP;
+DWORD SMOOTHINGTIME_BACKUP;
 
 long __stdcall pVEH_Hook(_EXCEPTION_POINTERS *pInfo)
 {
 	switch (pInfo->ContextRecord->Eip)
 	{
+	case OFF_PACKETDUPLICATION_EXCEPTION:
+		pInfo->ContextRecord->Ecx = PACKETDUPLICATION_BACKUP;
+		WritePacket();
+		return EXCEPTION_CONTINUE_EXECUTION;
+
 	case OFF_HUDSAYPOSITION_EXCEPTION:
-		pInfo->ContextRecord->Esi = 0x063883C4;
+		pInfo->ContextRecord->Esi = HUDSAYPOSITION_BACKUP;
 		RenderAll();
 		return EXCEPTION_CONTINUE_EXECUTION;
-		break;	
-		
-	case OFF_PACKETDUPLICATION_EXCEPTION:
-		pInfo->ContextRecord->Ecx = 0x6389464;
-		//WritePacket();
-		return EXCEPTION_CONTINUE_EXECUTION;	
-			   		
+
+	case OFF_SMOOTHINGTIME_EXCEPTION_1:
+		pInfo->ContextRecord->Edx = SMOOTHINGTIME_BACKUP;
+		return EXCEPTION_CONTINUE_EXECUTION;
+
+	case OFF_SMOOTHINGTIME_EXCEPTION_2:
+		pInfo->ContextRecord->Ecx = SMOOTHINGTIME_BACKUP;
+		return EXCEPTION_CONTINUE_EXECUTION;
+
+	case OFF_SMOOTHINGTIME_EXCEPTION_3:
+		pInfo->ContextRecord->Eax = SMOOTHINGTIME_BACKUP;
+		PredictPlayerState();
+		return EXCEPTION_CONTINUE_EXECUTION;
+
+	case OFF_SMOOTHINGTIME_EXCEPTION_4:
+		pInfo->ContextRecord->Eax = SMOOTHINGTIME_BACKUP;
+		return EXCEPTION_CONTINUE_EXECUTION;
 	}
 
 	return EXCEPTION_CONTINUE_SEARCH;
@@ -935,8 +956,6 @@ void Hook_t::ExecMainThread()
 	HookModule(GetCurrentThread(), o_48D120, h_48D120); //Console Fix		
 	HookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);//Background Effect	
 	HookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
-	HookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
-	HookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 	//HookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook); 	
 
 	// Level 3
@@ -947,8 +966,6 @@ void Hook_t::ExecMainThread()
 		UnHookModule(GetCurrentThread(), o_48D120, h_48D120);
 		UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
 		UnHookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
-		UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
-		UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 		//UnHookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);			
 
 		exit(-1);
@@ -957,6 +974,11 @@ void Hook_t::ExecMainThread()
  	else
  	{
 		AddVectoredExceptionHandler(17, pVEH_Hook);
+
+		PACKETDUPLICATION_BACKUP = *(DWORD *)OFF_PACKETDUPLICATION_DVAR;
+		HUDSAYPOSITION_BACKUP = *(DWORD *)OFF_HUDSAYPOSITION_DVAR;
+		SMOOTHINGTIME_BACKUP = *(DWORD *)OFF_SMOOTHINGTIME_DVAR;
+
 		SetNullPtrThreadHandle = SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(SetNullPtrThread), nullptr, 0, nullptr);
 		if (SetNullPtrThreadHandle)			
 		{ 
@@ -979,8 +1001,6 @@ void Hook_t::ExecMainThread()
 				UnHookModule(GetCurrentThread(), o_48D120, h_48D120);
 				UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
 				UnHookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
-				UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
-				UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 				//UnHookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);					
 
 				D3D::Restore_WndProc();
@@ -1003,8 +1023,6 @@ void Hook_t::ExecMainThread()
 			UnHookModule(GetCurrentThread(), o_48D120, h_48D120);
 			UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
 			UnHookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
-			UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
-			UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 			//UnHookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);
 
 			D3D::Restore_WndProc();
@@ -1023,15 +1041,16 @@ void Hook_t::ExecMainThread()
 void Hook_t::ExecCleaningThread()
 {	
 	FinishThread(SetNullPtrThreadHandle);
-	*(DWORD *)OFF_PACKETDUPLICATION_DVAR = 0x6389464; //"cl_packetdup"	
-	*(DWORD *)OFF_HUDSAYPOSITION_DVAR = 0x063883C4; //"cg_hudSayPosition"
+
+	*(DWORD *)OFF_PACKETDUPLICATION_DVAR = PACKETDUPLICATION_BACKUP; //"cl_packetdup"	
+	*(DWORD *)OFF_HUDSAYPOSITION_DVAR = HUDSAYPOSITION_BACKUP; //"cg_hudSayPosition"
+	*(DWORD *)OFF_SMOOTHINGTIME_DVAR = SMOOTHINGTIME_BACKUP; //"cg_viewZSmoothingTime"
+
 	RemoveVectoredExceptionHandler(pVEH_Hook);	
 
 	UnHookModule(GetCurrentThread(), o_48D120, h_48D120);
 	UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
 	UnHookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
-	UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
-	UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 	//UnHookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);	
 
 	D3D::Restore_WndProc();

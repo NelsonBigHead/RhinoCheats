@@ -1,9 +1,6 @@
 #include "stdafx.h"
 #include "WritePackets.h"
 
-tPredictPlayerState oPredictPlayerState;
-tWritePacket oWritePacket;
-
 void AntiAim(usercmd_t* pCmd)
 {
 	/*if (Settings[aim_enabled].Value.bValue || Settings[aim_key].Value.iValue)
@@ -120,10 +117,47 @@ void DoNextCmd(usercmd_t* nextCmd)
 
 
 /************************************************************************/
+/* WritePacket                                                          */
+/************************************************************************/
+
+void WritePacket()
+{
+	if (cg)
+	{
+		usercmd_t* curCmd = pinput->GetUserCmd(pinput->currentCmdNum);
+
+		if (Aim.isVehicle &&
+			cg_entities[cg->clientNum].valid && (cg_entities[cg->clientNum].IsAlive & 1))
+		{
+			if (Settings[silent_aim].Value.bValue && Aim.isReady[Aim_t::isReadyforFire] && !Settings[third_person].Value.bValue)
+			{
+				//-= doesn't work
+				float flOldYaw = SHORT2ANGLE(curCmd->viewangles[1]);
+
+				curCmd->viewangles[1] += ANGLE2SHORT(Aim.vAimAngles[1]);
+				curCmd->viewangles[0] += ANGLE2SHORT(Aim.vAimAngles[0]);
+
+				MovementFix(curCmd, SHORT2ANGLE(curCmd->viewangles[1]), flOldYaw, curCmd->forwardmove, curCmd->rightmove);
+			}
+
+			if (Settings[auto_shoot].Value.bValue && Aim.isReady[Aim_t::isReadyforFire])
+				curCmd->buttons |= BUTTON_FIRE;
+
+			Aim.Autoshoot();
+		}
+
+		AntiAim(curCmd);
+		InverseTroller(curCmd);
+	}
+}
+
+
+
+/************************************************************************/
 /* PredictPlayerState                                                   */
 /************************************************************************/
 
-int HOOKCALL hPredictPlayerState(int a1)
+void PredictPlayerState()
 {
 	if (cg)
 	{
@@ -158,47 +192,10 @@ int HOOKCALL hPredictPlayerState(int a1)
 
 			if (Settings[auto_shoot].Value.bValue && Aim.isReady[Aim_t::isReadyforFire])
 				oldCmd->buttons |= BUTTON_FIRE;
+
+			Aim.Autoshoot();
 		}
 
 		Nospread.ApplyNoSpread(oldCmd, oldCmd->servertime);
 	}
-
-	return oPredictPlayerState(a1);
-}
-
-
-
-/************************************************************************/
-/* WritePacket                                                          */
-/************************************************************************/
-
-int HOOKCALL hWritePacket(int a1)
-{
-	if (cg)
-	{
-		usercmd_t* curCmd = pinput->GetUserCmd(pinput->currentCmdNum);
-
-		if (Aim.isVehicle &&
-			cg_entities[cg->clientNum].valid && (cg_entities[cg->clientNum].IsAlive & 1))
-		{
-			if (Settings[silent_aim].Value.bValue && Aim.isReady[Aim_t::isReadyforFire] && !Settings[third_person].Value.bValue)
-			{
-				//-= doesn't work
-				float flOldYaw = SHORT2ANGLE(curCmd->viewangles[1]);
-
-				curCmd->viewangles[1] += ANGLE2SHORT(Aim.vAimAngles[1]);
-				curCmd->viewangles[0] += ANGLE2SHORT(Aim.vAimAngles[0]);
-
-				MovementFix(curCmd, SHORT2ANGLE(curCmd->viewangles[1]), flOldYaw, curCmd->forwardmove, curCmd->rightmove);
-			}
-
-			if (Settings[auto_shoot].Value.bValue && Aim.isReady[Aim_t::isReadyforFire])
-				curCmd->buttons |= BUTTON_FIRE;
-		}
-
-		AntiAim(curCmd);
-		InverseTroller(curCmd);
-	}
-
-	return oWritePacket(a1);
 }

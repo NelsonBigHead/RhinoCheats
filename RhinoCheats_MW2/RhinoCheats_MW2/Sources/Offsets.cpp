@@ -71,6 +71,3 @@ DWORD Offsets::server_health = NULL;
 DWORD Offsets::playerdie = NULL;
 DWORD Offsets::key_input = NULL;
 
-DWORD Offsets::predictplayerstate = NULL;
-DWORD Offsets::writepacket = NULL;
-
