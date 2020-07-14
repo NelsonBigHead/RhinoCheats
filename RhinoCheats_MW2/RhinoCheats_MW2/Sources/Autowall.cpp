@@ -65,10 +65,7 @@ float Autowall_t::GetRemainingPower(vec3_t start, vec3_t end, centity_t* ent)
 				return bl_enter.damageMultiplier;
 
 			// Step into the hit wall.
-			if (!StepForward(&bl_enter, &tr_enter, 0.13500001f))
-				return 0.0f;
-
-			if (!Engine.R_BulletPenetrationCheck(&bl_enter))
+			if (!StepForward(&bl_enter, &tr_enter, 0.13500001f) || !Engine.R_BulletPenetrationCheck(&bl_enter))
 				return 0.0f;
 
 			did_hit = TraceBullet(&bl_enter, &tr_enter, &cg_entities[cg->clientNum], tr_enter.materialType);
