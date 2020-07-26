@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "WritePackets.h"
 
+tPredictPlayerState oPredictPlayerState;
+tWritePacket oWritePacket;
+
 void AntiAim(usercmd_t* pCmd)
 {
 	/*if (Settings[aim_enabled].Value.bValue || Settings[aim_key].Value.iValue)
@@ -120,6 +123,13 @@ void DoNextCmd(usercmd_t* nextCmd)
 /* WritePacket                                                          */
 /************************************************************************/
 
+int HOOKCALL hWritePacket(int a1)
+{
+	WritePacket();
+
+	return oWritePacket(a1);
+}
+
 void WritePacket()
 {
 	if (cg)
@@ -156,6 +166,13 @@ void WritePacket()
 /************************************************************************/
 /* PredictPlayerState                                                   */
 /************************************************************************/
+
+int HOOKCALL hPredictPlayerState(int a1)
+{
+	PredictPlayerState();
+
+	return oPredictPlayerState(a1);
+}
 
 void PredictPlayerState()
 {

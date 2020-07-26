@@ -408,6 +408,9 @@ delta + old_server_entityinfo = new_server_entityinfo
 	*/
 	Offsets::key_input = /*0xB382B0*/ 0xAB2B98;
 
+	Offsets::predictplayerstate = 0x4A2A70;
+	Offsets::writepacket = 0x4C0A10;
+
 
 	//iw5mp Base 400000 Size 68a5000 \x8B\x44\x24\x04\x8B\x40\x04\xC3 xxxxxxxx	                                 
 	Offsets::strHeight = /*0x5FD440*/ 0x40F7C0;
@@ -553,6 +556,9 @@ void GetPointers()
 	*/
 
 	key_input = (KInput_t *)Offsets::key_input;
+
+	oPredictPlayerState = (tPredictPlayerState)Offsets::predictplayerstate;
+	oWritePacket = (tWritePacket)Offsets::writepacket;
 
 	//========================================================================
 
@@ -956,6 +962,8 @@ void Hook_t::ExecMainThread()
 	HookModule(GetCurrentThread(), o_48D120, h_48D120); //Console Fix		
 	HookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);//Background Effect	
 	HookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
+	//HookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+	//HookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 	//HookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook); 	
 
 	// Level 3
@@ -966,6 +974,8 @@ void Hook_t::ExecMainThread()
 		UnHookModule(GetCurrentThread(), o_48D120, h_48D120);
 		UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
 		UnHookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
+		//UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+		//UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 		//UnHookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);			
 
 		exit(-1);
@@ -1001,6 +1011,8 @@ void Hook_t::ExecMainThread()
 				UnHookModule(GetCurrentThread(), o_48D120, h_48D120);
 				UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
 				UnHookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
+				//UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+				//UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 				//UnHookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);					
 
 				D3D::Restore_WndProc();
@@ -1023,6 +1035,8 @@ void Hook_t::ExecMainThread()
 			UnHookModule(GetCurrentThread(), o_48D120, h_48D120);
 			UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
 			UnHookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
+			//UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+			//UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 			//UnHookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);
 
 			D3D::Restore_WndProc();
@@ -1051,6 +1065,8 @@ void Hook_t::ExecCleaningThread()
 	UnHookModule(GetCurrentThread(), o_48D120, h_48D120);
 	UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
 	UnHookModule(GetCurrentThread(), oLiveGetSkills, hLiveGetSkills);
+	//UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+	//UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 	//UnHookModule(GetCurrentThread(), VM_Notify, VM_Notify_Hook);	
 
 	D3D::Restore_WndProc();

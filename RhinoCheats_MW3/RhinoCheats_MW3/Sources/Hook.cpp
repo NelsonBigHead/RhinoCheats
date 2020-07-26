@@ -459,6 +459,16 @@ void GetOffsets() {
 	Offsets::key_input = GET_INT(ki + 2);
 
 
+	DWORD pps = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x05\x00\x00\x00\x00\x83\xEC\x24", "xx????xxx");
+	XASSERT(pps);
+	Offsets::predictplayerstate = pps;
+
+
+	DWORD wp = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xB8\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x84\x24\x00\x00\x00\x00\x56\x8B", "x????x????xxx????xx");
+	XASSERT(wp);
+	Offsets::writepacket = wp;
+
+
 	DWORD sht = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\x8B\x44\x24\x04\x8B\x40\x04\xC3", "xxxxxxxx");
 	XASSERT(sht);
 	Offsets::strHeight = sht;
@@ -686,6 +696,9 @@ void GetPointers()
 	ServerHealth = (Health_s *)Offsets::server_health;
 
 	key_input = (KInput_t *)Offsets::key_input;
+
+	oPredictPlayerState = (tPredictPlayerState)Offsets::predictplayerstate;
+	oWritePacket = (tWritePacket)Offsets::writepacket;
 
 	//========================================================================
 
@@ -1247,7 +1260,8 @@ void Hook_t::ExecMainThread()
 	
 	HookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook); //Console Fix		
 	HookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);//Background Effect	
-	
+	//HookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+	//HookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 	// Level 3
  	if (!D3D::InitAndHookD3D())	
@@ -1261,6 +1275,8 @@ void Hook_t::ExecMainThread()
 		}
 		UnHookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook);
 		UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
+		//UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+		//UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 		exit(-1);
 	} 	
@@ -1298,6 +1314,8 @@ void Hook_t::ExecMainThread()
 				}
 				UnHookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook);
 				UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
+				//UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+				//UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 				D3D::Restore_WndProc();
 
@@ -1323,6 +1341,8 @@ void Hook_t::ExecMainThread()
 			}
 			UnHookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook);
 			UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
+			//UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+			//UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 			D3D::Restore_WndProc();
 
@@ -1359,6 +1379,8 @@ void Hook_t::ExecCleaningThread()
 	}
 	UnHookModule(GetCurrentThread(), CL_KeyEvent, CL_KeyEvent_Hook);
 	UnHookModule(GetCurrentThread(), CL_DrawStretchPic, CL_DrawStretchPic_Hook);
+	//UnHookModule(GetCurrentThread(), oPredictPlayerState, hPredictPlayerState);
+	//UnHookModule(GetCurrentThread(), oWritePacket, hWritePacket);
 
 	D3D::Restore_WndProc();
 

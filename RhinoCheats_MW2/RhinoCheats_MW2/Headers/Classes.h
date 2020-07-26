@@ -418,11 +418,12 @@ typedef struct
 	char pad_0x0020[0x4]; //0x0020
 	__int32 assists; //0x0024 
 	__int32 headshots; //0x0028 
-	char pad_0x002C[0x1C]; //0x002C
+	char pad_0x002C[0x18]; //0x002C
+	__int32 kdratio; //0x0044 
 	__int32 wins; //0x0048 
 	__int32 loses; //0x004C 
 	__int32 ties; //0x0050 
-	__int32 killstreak; //0x0054 
+	__int32 winstreak; //0x0054 
 	char N00000D23[1499]; //0x0058 
 	char weaponChallenges[284]; //0x0633 
 	char perkChallenges[16]; //0x074F 

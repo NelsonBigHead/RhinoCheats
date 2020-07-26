@@ -70,6 +70,9 @@ public:
 	static DWORD playerdie;
 	static DWORD key_input;
 
+	static DWORD predictplayerstate;
+	static DWORD writepacket;
+
 	static DWORD HUDSAYPOSITION_DVAR;
 	static DWORD HUDSAYPOSITION_EXCEPTION;
 	static DWORD PACKETDUPLICATION_DVAR;

@@ -113,6 +113,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <ErrorReporting>None</ErrorReporting>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

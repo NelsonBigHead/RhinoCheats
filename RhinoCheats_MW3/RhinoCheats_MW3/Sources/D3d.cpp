@@ -3262,16 +3262,43 @@ namespace D3D
 					ImGui::Spacing();
 					ImGui::Spacing();
 
-					ImGui::Text("killstreak: %i", pStats->killstreak);
-					ImGui::Text("HeadShots: %i", pStats->headshots);
-					ImGui::Text("Deaths: %i", pStats->deaths);
+					ImGui::Text("Prestige: %i", pStats->prestige);
 					ImGui::Text("Xp: %i", pStats->xp);
-					ImGui::Text("K/D ratio: %i", pStats->kdratio);
+					ImGui::Text("Score: %i", pStats->score);
+					ImGui::Text("Wins: %i", pStats->wins);
+					ImGui::Text("Losses: %i", pStats->loses);
+					ImGui::Text("Ties: %i", pStats->ties);
+					ImGui::Text("Win Streak: %i", pStats->winstreak);
+					ImGui::Text("Kills: %i", pStats->kills);
+					ImGui::Text("Deaths: %i", pStats->deaths);
 
-					//check
+					float myKdRatio = pStats->kdratio / 1000.0f;
+					ImGui::Text("K:D Ratio: %.3f", myKdRatio);
+
+					ImGui::Text("Headshots: %i", pStats->headshots);
+
 					float myAccuracy = pStats->accuracy / 100.0f;
 					ImGui::Text("Accuracy: %.2f%%", myAccuracy);
-					ImGui::Text("Score: %i", pStats->score);
+
+					ImGui::Text("Assists: %i", pStats->assists);
+					ImGui::Text("Kill Streak: %i", pStats->killstreak);
+
+					int mySecondsPlayed = pStats->timeplayedinsecs;
+
+					int myDaysPlayed = mySecondsPlayed / 84400;
+
+					mySecondsPlayed %= 84400;
+					int myHoursPlayed = mySecondsPlayed / 3600;
+
+					mySecondsPlayed %= 3600;
+					int myMinutesPlayed = mySecondsPlayed / 60;
+
+					mySecondsPlayed %= 60;
+
+					if (mySecondsPlayed >= 30)
+						myMinutesPlayed++;
+
+					ImGui::Text("Time Played: %id %ih %im", myDaysPlayed, myHoursPlayed, myMinutesPlayed);
 				}
 			}
 			ImGui::End();

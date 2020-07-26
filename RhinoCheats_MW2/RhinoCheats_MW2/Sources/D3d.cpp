@@ -3138,17 +3138,17 @@ namespace D3D
 					ImGui::Spacing();
 					ImGui::Spacing();
 
-					ImGui::Text("killstreak: %i", pStats->killstreak);
+					ImGui::Text("winstreak: %i", pStats->winstreak);
 					ImGui::Text("HeadShots: %i", pStats->headshots);
 					ImGui::Text("Deaths: %i", pStats->deaths);
 					ImGui::Text("Xp: %i", pStats->xp);
 
-					//check
-					//ImGui::Text("K/D ratio: %i", pStats->kdratio);
+					float myKdRatio = pStats->kdratio / 1000.0f;
+					ImGui::Text("K/D ratio: %.3f", myKdRatio);
 
+					//check
 					//float myAccuracy = pStats->accuracy / 100.0f;
 					//ImGui::Text("Accuracy: %.2f%%", myAccuracy);
-
 					ImGui::Text("Score: %i", pStats->score);
 				}
 			}

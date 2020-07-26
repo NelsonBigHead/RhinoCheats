@@ -73,8 +73,8 @@ public:
 	static DWORD playerdie;
 	static DWORD key_input;	
 
-	
-	
+	static DWORD predictplayerstate;
+	static DWORD writepacket;
 	
 	
 };
