@@ -1411,7 +1411,7 @@ namespace D3D
 			else if (Stricmp(Output.cmdName, "rc_crash") == 0 && !isTekno)
 			{
 				AddLog("rc_crash executed.");
-				Engine.SendToConsole("say \"\x5E\x02\xFF\xFF\xFF\"");
+				Engine.SendToConsole("say \"\x5E\x02\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\"");
 				AddLog("rc_crash done.");
 			}
 			else if (Stricmp(Output.cmdName, "rc_maprestart") == 0 && !isTekno)

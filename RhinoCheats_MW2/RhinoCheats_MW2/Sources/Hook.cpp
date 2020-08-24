@@ -49,12 +49,8 @@
 #define OFF_PACKETDUPLICATION_EXCEPTION 0x4C0B4E
 
 
-#define OFF_SMOOTHINGTIME_DVAR 0xAA6180
-
-#define OFF_SMOOTHINGTIME_EXCEPTION_1 0x4A2931
-#define OFF_SMOOTHINGTIME_EXCEPTION_2 0x4A2A1A
-#define OFF_SMOOTHINGTIME_EXCEPTION_3 0x4A2A34
-#define OFF_SMOOTHINGTIME_EXCEPTION_4 0x4ABB88
+#define OFF_MOUSEACCEL_DVAR 0xBC3860
+#define OFF_MOUSEACCEL_EXCEPTION 0x4BFCC4
 
 /************************************************************************/
 /* Threads                                                              */
@@ -79,7 +75,7 @@ DWORD WINAPI SetNullPtrThread(void *unused)
 	{	
 		*(DWORD *)OFF_PACKETDUPLICATION_DVAR = 0; //"cl_packetdup"	
 		*(DWORD *)OFF_HUDSAYPOSITION_DVAR = 0; //"cg_hudSayPosition"			
-		*(DWORD *)OFF_SMOOTHINGTIME_DVAR = 0; //"cg_viewZSmoothingTime"
+		*(DWORD *)OFF_MOUSEACCEL_DVAR = 0; //"cl_mouseAccel"
 
 		SafeSleep(5017);
 	}
@@ -626,11 +622,12 @@ void FixString(char *pChar)
 			if (!(pChar[i] == 2 && pChar[i + 1] == 48 && pChar[i + 2] == 48 && pChar[i + 3] == -72 && pChar[i + 4] == 53 && pChar[i + 5] == 72 && pChar[i + 6] == 1))
 				pChar[i] = 32;*/
 
-	LPSTR szInvalidText;
-
-	if (szInvalidText = strstr(pChar, "\x5E\x02\xFF\xFF\xFF"))
-		strcpy_s(szInvalidText, strlen("crash") + 1, "crash");
-
+	if (!strstr(pChar, "killiconheadshot")) //because i'm using that icon for the killspam text
+	{
+		for (int i = 0; i < strlen(pChar); i++)
+			if ((int)pChar[i] < 32)
+				pChar[i] = 32;
+	}
 }
 __declspec(naked) void h_client_crasher_fix()
 {
@@ -806,40 +803,39 @@ int __cdecl VM_Notify_Hook(int a1, unsigned int a2, unsigned int *a3) {
 
 DWORD PACKETDUPLICATION_BACKUP;
 DWORD HUDSAYPOSITION_BACKUP;
-DWORD SMOOTHINGTIME_BACKUP;
+DWORD MOUSEACCEL_BACKUP;
 
 long __stdcall pVEH_Hook(_EXCEPTION_POINTERS *pInfo)
 {
-	switch (pInfo->ContextRecord->Eip)
+	if (pInfo->ExceptionRecord->ExceptionCode == EXCEPTION_GUARD_PAGE)
 	{
-	case OFF_PACKETDUPLICATION_EXCEPTION:
-		pInfo->ContextRecord->Ecx = PACKETDUPLICATION_BACKUP;
-		WritePacket();
-		return EXCEPTION_CONTINUE_EXECUTION;
-
-	case OFF_HUDSAYPOSITION_EXCEPTION:
-		pInfo->ContextRecord->Esi = HUDSAYPOSITION_BACKUP;
-		RenderAll();
-		return EXCEPTION_CONTINUE_EXECUTION;
-
-	case OFF_SMOOTHINGTIME_EXCEPTION_1:
-		pInfo->ContextRecord->Edx = SMOOTHINGTIME_BACKUP;
-		return EXCEPTION_CONTINUE_EXECUTION;
-
-	case OFF_SMOOTHINGTIME_EXCEPTION_2:
-		pInfo->ContextRecord->Ecx = SMOOTHINGTIME_BACKUP;
-		return EXCEPTION_CONTINUE_EXECUTION;
-
-	case OFF_SMOOTHINGTIME_EXCEPTION_3:
-		pInfo->ContextRecord->Eax = SMOOTHINGTIME_BACKUP;
-		PredictPlayerState();
-		return EXCEPTION_CONTINUE_EXECUTION;
-
-	case OFF_SMOOTHINGTIME_EXCEPTION_4:
-		pInfo->ContextRecord->Eax = SMOOTHINGTIME_BACKUP;
+		if (pInfo->ContextRecord->Eip == Offsets::predictplayerstate)
+		{
+			PredictPlayerState();
+		}
 		return EXCEPTION_CONTINUE_EXECUTION;
 	}
+	else
+	{
+		DWORD dwProtection = PAGE_EXECUTE | PAGE_GUARD;
+		switch (pInfo->ContextRecord->Eip)
+		{
+		case OFF_PACKETDUPLICATION_EXCEPTION:
+			pInfo->ContextRecord->Ecx = PACKETDUPLICATION_BACKUP;
+			WritePacket();
+			return EXCEPTION_CONTINUE_EXECUTION;
 
+		case OFF_HUDSAYPOSITION_EXCEPTION:
+			pInfo->ContextRecord->Esi = HUDSAYPOSITION_BACKUP;
+			RenderAll();
+			return EXCEPTION_CONTINUE_EXECUTION;
+
+		case OFF_MOUSEACCEL_EXCEPTION:
+			pInfo->ContextRecord->Ecx = MOUSEACCEL_BACKUP;
+			VirtualProtect((LPVOID)Offsets::predictplayerstate, sizeof(BYTE), dwProtection, &dwProtection);
+			return EXCEPTION_CONTINUE_EXECUTION;
+		}
+	}
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
@@ -987,7 +983,7 @@ void Hook_t::ExecMainThread()
 
 		PACKETDUPLICATION_BACKUP = *(DWORD *)OFF_PACKETDUPLICATION_DVAR;
 		HUDSAYPOSITION_BACKUP = *(DWORD *)OFF_HUDSAYPOSITION_DVAR;
-		SMOOTHINGTIME_BACKUP = *(DWORD *)OFF_SMOOTHINGTIME_DVAR;
+		MOUSEACCEL_BACKUP = *(DWORD *)OFF_MOUSEACCEL_DVAR;
 
 		SetNullPtrThreadHandle = SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(SetNullPtrThread), nullptr, 0, nullptr);
 		if (SetNullPtrThreadHandle)			
@@ -1058,7 +1054,7 @@ void Hook_t::ExecCleaningThread()
 
 	*(DWORD *)OFF_PACKETDUPLICATION_DVAR = PACKETDUPLICATION_BACKUP; //"cl_packetdup"	
 	*(DWORD *)OFF_HUDSAYPOSITION_DVAR = HUDSAYPOSITION_BACKUP; //"cg_hudSayPosition"
-	*(DWORD *)OFF_SMOOTHINGTIME_DVAR = SMOOTHINGTIME_BACKUP; //"cg_viewZSmoothingTime"
+	*(DWORD *)OFF_MOUSEACCEL_DVAR = MOUSEACCEL_BACKUP; //"cl_mouseAccel"
 
 	RemoveVectoredExceptionHandler(pVEH_Hook);	
 

@@ -152,8 +152,6 @@ void WritePacket()
 
 			if (Settings[auto_shoot].Value.bValue && Aim.isReady[Aim_t::isReadyforFire])
 				curCmd->buttons |= BUTTON_FIRE;
-
-			Aim.Autoshoot();
 		}
 
 		AntiAim(curCmd);
@@ -209,8 +207,6 @@ void PredictPlayerState()
 
 			if (Settings[auto_shoot].Value.bValue && Aim.isReady[Aim_t::isReadyforFire])
 				oldCmd->buttons |= BUTTON_FIRE;
-
-			Aim.Autoshoot();
 		}
 
 		Nospread.ApplyNoSpread(oldCmd, oldCmd->servertime);

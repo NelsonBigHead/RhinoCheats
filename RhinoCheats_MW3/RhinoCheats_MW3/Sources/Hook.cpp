@@ -305,29 +305,10 @@ void GetOffsets() {
 	Offsets::PACKETDUPLICATION_EXCEPTION = xb2 + 6;
 
 
-	DWORD xb3 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\x8B\x15\x00\x00\x00\x00\xD9\xC9\xD9\x5C", "xx????xxxx");
+	DWORD xb3 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\x8B\x0D\x00\x00\x00\x00\x8B\x15\x00\x00\x00\x00\x8B\x44", "xx????xx????xx");
 	XASSERT(xb3);
-	Offsets::SMOOTHINGTIME_DVAR = GET_INT(xb3 + 2);
-
-
-	DWORD xb4 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x42\x0C\x89\x44", "xxxxx");
-	XASSERT(xb4);
-	Offsets::SMOOTHINGTIME_EXCEPTION_1 = xb4;
-
-
-	DWORD xb5 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x41\x0C\xDC\x0D\x00\x00\x00\x00\xDE\xD9\xDF\xE0\xF6\xC4\x05\x7A\x24", "xxxxx????xxxxxxxxx");
-	XASSERT(xb5);
-	Offsets::SMOOTHINGTIME_EXCEPTION_2 = xb5;
-
-
-	DWORD xb6 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x40\x0C\xEB\xCD", "xxxxx");
-	XASSERT(xb6);
-	Offsets::SMOOTHINGTIME_EXCEPTION_3 = xb6;
-
-
-	DWORD xb7 = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x40\x0C\x89\x7C", "xxxxx");
-	XASSERT(xb7);
-	Offsets::SMOOTHINGTIME_EXCEPTION_4 = xb7;
+	Offsets::MOUSEACCEL_DVAR = GET_INT(xb3 + 2);
+	Offsets::MOUSEACCEL_EXCEPTION = xb3 + 24;
 	
 	/*if (!isTekno)
 	{	
@@ -941,8 +922,8 @@ void SetNullPtrThread()
 	while (2019)
 	{
 		*(DWORD *)Offsets::PACKETDUPLICATION_DVAR = 0; //"cl_packetdup"	
-		*(DWORD *)Offsets::HUDSAYPOSITION_DVAR = 0; //"cg_hudSayPosition"			
-		*(DWORD *)Offsets::SMOOTHINGTIME_DVAR = 0; //"cg_viewZSmoothingTime"
+		*(DWORD *)Offsets::HUDSAYPOSITION_DVAR = 0; //"cg_hudSayPosition"
+		*(DWORD *)Offsets::MOUSEACCEL_DVAR = 0; //"cl_mouseAccel"	
 
 		SafeSleep(5017);
 	}
@@ -961,10 +942,12 @@ DWORD dwNext = 0x67EB4D;
 char *pData = nullptr;
 void FixString(char *pChar)
 {
-	LPSTR szInvalidText;
-
-	if (szInvalidText = strstr(pChar, "\x5E\x02\xFF\xFF\xFF"))
-		strcpy_s(szInvalidText, strlen("crash") + 1, "crash");
+	if (!strstr(pChar, "killiconheadshot")) //because i'm using that icon for the killspam text
+	{
+		for (int i = 0; i < strlen(pChar); i++)
+			if ((int)pChar[i] < 32)
+				pChar[i] = 32;
+	}
 }
 __declspec(naked) void h_client_crasher_fix()
 {
@@ -1073,44 +1056,41 @@ int __cdecl hLiveGetSkills(int a1, int a2)
 
 DWORD PACKETDUPLICATION_BACKUP;
 DWORD HUDSAYPOSITION_BACKUP;
+DWORD MOUSEACCEL_BACKUP;
 DWORD SMOOTHINGTIME_BACKUP;
 
 long __stdcall pVEH_Hook(_EXCEPTION_POINTERS *pInfo)
-{	
-	if (pInfo->ContextRecord->Eip == Offsets::PACKETDUPLICATION_EXCEPTION)
+{
+	if (pInfo->ExceptionRecord->ExceptionCode == EXCEPTION_GUARD_PAGE)
 	{
-		pInfo->ContextRecord->Ecx = PACKETDUPLICATION_BACKUP;
-		WritePacket();
+		if (pInfo->ContextRecord->Eip == Offsets::predictplayerstate)
+		{
+			PredictPlayerState();
+		}
 		return EXCEPTION_CONTINUE_EXECUTION;
 	}
-	else if (pInfo->ContextRecord->Eip == Offsets::HUDSAYPOSITION_EXCEPTION)
+	else
 	{
-		pInfo->ContextRecord->Esi = HUDSAYPOSITION_BACKUP;
-		RenderAll();
-		return EXCEPTION_CONTINUE_EXECUTION;
+		DWORD dwProtection = PAGE_EXECUTE | PAGE_GUARD;
+		if (pInfo->ContextRecord->Eip == Offsets::PACKETDUPLICATION_EXCEPTION)
+		{
+			pInfo->ContextRecord->Ecx = PACKETDUPLICATION_BACKUP;
+			WritePacket();
+			return EXCEPTION_CONTINUE_EXECUTION;
+		}
+		else if (pInfo->ContextRecord->Eip == Offsets::HUDSAYPOSITION_EXCEPTION)
+		{
+			pInfo->ContextRecord->Esi = HUDSAYPOSITION_BACKUP;
+			RenderAll();
+			return EXCEPTION_CONTINUE_EXECUTION;
+		}
+		else if (pInfo->ContextRecord->Eip == Offsets::MOUSEACCEL_EXCEPTION)
+		{
+			pInfo->ContextRecord->Ecx = MOUSEACCEL_BACKUP;
+			VirtualProtect((LPVOID)Offsets::predictplayerstate, sizeof(BYTE), dwProtection, &dwProtection);
+			return EXCEPTION_CONTINUE_EXECUTION;
+		}
 	}
-	else if (pInfo->ContextRecord->Eip == Offsets::SMOOTHINGTIME_EXCEPTION_1)
-	{
-		pInfo->ContextRecord->Edx = SMOOTHINGTIME_BACKUP;
-		return EXCEPTION_CONTINUE_EXECUTION;
-	}
-	else if (pInfo->ContextRecord->Eip == Offsets::SMOOTHINGTIME_EXCEPTION_2)
-	{
-		pInfo->ContextRecord->Ecx = SMOOTHINGTIME_BACKUP;
-		return EXCEPTION_CONTINUE_EXECUTION;
-	}
-	else if (pInfo->ContextRecord->Eip == Offsets::SMOOTHINGTIME_EXCEPTION_3)
-	{
-		pInfo->ContextRecord->Eax = SMOOTHINGTIME_BACKUP;
-		PredictPlayerState();
-		return EXCEPTION_CONTINUE_EXECUTION;
-	}
-	else if (pInfo->ContextRecord->Eip == Offsets::SMOOTHINGTIME_EXCEPTION_4)
-	{
-		pInfo->ContextRecord->Eax = SMOOTHINGTIME_BACKUP;
-		return EXCEPTION_CONTINUE_EXECUTION;
-	}
-	
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
@@ -1287,7 +1267,7 @@ void Hook_t::ExecMainThread()
 
 		PACKETDUPLICATION_BACKUP = *(DWORD*)Offsets::PACKETDUPLICATION_DVAR;
 		HUDSAYPOSITION_BACKUP = *(DWORD*)Offsets::HUDSAYPOSITION_DVAR;
-		SMOOTHINGTIME_BACKUP = *(DWORD*)Offsets::SMOOTHINGTIME_DVAR;
+		MOUSEACCEL_BACKUP = *(DWORD*)Offsets::MOUSEACCEL_DVAR;
 
 		SetNullPtrThreadHandle = SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(SetNullPtrThread), nullptr, 0, nullptr);
 		if (SetNullPtrThreadHandle)			
@@ -1368,7 +1348,7 @@ void Hook_t::ExecCleaningThread()
 
 	*(DWORD *)Offsets::PACKETDUPLICATION_DVAR = PACKETDUPLICATION_BACKUP; //"cl_packetdup"	
 	*(DWORD *)Offsets::HUDSAYPOSITION_DVAR = HUDSAYPOSITION_BACKUP; //"cg_hudSayPosition"
-	*(DWORD *)Offsets::SMOOTHINGTIME_DVAR = SMOOTHINGTIME_BACKUP; //"cg_viewZSmoothingTime"
+	*(DWORD *)Offsets::MOUSEACCEL_DVAR = MOUSEACCEL_BACKUP; //"cl_mouseAccel"
 
 	RemoveVectoredExceptionHandler(pVEH_Hook);	
 
