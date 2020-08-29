@@ -403,6 +403,7 @@ delta + old_server_entityinfo = new_server_entityinfo
 	
 	*/
 	Offsets::key_input = /*0xB382B0*/ 0xAB2B98;
+	Offsets::weapon_firerecoil = 0x4B9FCB;
 
 	Offsets::predictplayerstate = 0x4A2A70;
 	Offsets::writepacket = 0x4C0A10;

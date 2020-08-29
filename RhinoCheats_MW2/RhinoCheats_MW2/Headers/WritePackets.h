@@ -3,8 +3,6 @@
 #define ANGLE_DOWN 70
 #define ANGLE_UP -70
 
-#define HOOKCALL __cdecl
-
 int HOOKCALL hPredictPlayerState(int a1);
 typedef int(HOOKCALL* tPredictPlayerState)(int a1);
 extern tPredictPlayerState oPredictPlayerState;

@@ -440,6 +440,11 @@ void GetOffsets() {
 	Offsets::key_input = GET_INT(ki + 2);
 
 
+	DWORD wfr = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\x74\x22\x57\xE8\x00\x00\x00\x00\x8B\x54", "xxxx????xx");
+	XASSERT(wfr);
+	Offsets::weapon_firerecoil = wfr;
+
+
 	DWORD pps = Hook.FindPattern(reinterpret_cast<DWORD>(iw5mp_module), iw5mp_size, (PBYTE)"\xD9\x05\x00\x00\x00\x00\x83\xEC\x24", "xx????xxx");
 	XASSERT(pps);
 	Offsets::predictplayerstate = pps;

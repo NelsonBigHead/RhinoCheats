@@ -314,7 +314,7 @@ bool Engine_t::WorldToScreen(vec3_t vWorldLocation, float Screen[2])
 
 void Engine_t::DamageFeedBack_Removal() {	
 
-	if (Settings[no_recoil].Value.bValue)
+	/*if (Settings[no_recoil].Value.bValue)
 	{
 		punch->punchAngles[0] = 0;
 		punch->punchAngles[1] = 0;
@@ -323,6 +323,24 @@ void Engine_t::DamageFeedBack_Removal() {
 		pViewMatrix->recoil[2] = 0;
 		pViewMatrix->recoil[0] = 0;
 		pViewMatrix->recoil[1] = 0;		
+	}*/
+
+	if (Settings[no_recoil].Value.bValue && *(BYTE*)Offsets::weapon_firerecoil != 0xEB)
+	{
+		DWORD dwProtection;
+
+		VirtualProtect((LPVOID)Offsets::weapon_firerecoil, sizeof(BYTE), PAGE_EXECUTE_READWRITE, &dwProtection);
+		*(BYTE*)Offsets::weapon_firerecoil = 0xEB;
+		VirtualProtect((LPVOID)Offsets::weapon_firerecoil, sizeof(BYTE), dwProtection, NULL);
+	}
+
+	else if (!Settings[no_recoil].Value.bValue && *(BYTE*)Offsets::weapon_firerecoil != 0x74)
+	{
+		DWORD dwProtection;
+
+		VirtualProtect((LPVOID)Offsets::weapon_firerecoil, sizeof(BYTE), PAGE_EXECUTE_READWRITE, &dwProtection);
+		*(BYTE*)Offsets::weapon_firerecoil = 0x74;
+		VirtualProtect((LPVOID)Offsets::weapon_firerecoil, sizeof(BYTE), dwProtection, NULL);
 	}
 }
 
