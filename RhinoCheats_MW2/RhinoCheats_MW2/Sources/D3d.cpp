@@ -2180,7 +2180,7 @@ namespace D3D
 			}
 
 			if (menu_flag) {
-				SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.menu, 0, nullptr);
+				Hook.playSound(sounds.menu);
 				menu_flag = 0;
 			}
 
@@ -3068,7 +3068,7 @@ namespace D3D
 			if (!menu_flag)
 				menu_flag = 1;
 			if (menu_turn_off) {
-				SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.menu_toggle, 0, nullptr);
+				Hook.playSound(sounds.menu_toggle);
 				menu_turn_off = 0;
 			}
 		}

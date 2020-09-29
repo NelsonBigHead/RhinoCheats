@@ -29,7 +29,7 @@ public:
 	static MODULEINFO GetModuleInfo(HMODULE hModule);	
 
 	static void MakeJMP(BYTE * pAddress, DWORD dwJumpTo, DWORD dwLen);
-	static void playSound(LPVOID HackPath);
+	static void playSound(LPCSTR HackPath);
 	static void CreateFolder(const char * path);	
 	static void FinishThread(HANDLE hThread);
 	static void ExecMainThread();

@@ -38,7 +38,7 @@ void Sounds_t::killsound() {
 	if (bGetValuesOnce)
 	{
 		if (Start_) {
-			SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.start, 0, nullptr);
+			Hook.playSound(sounds.start);
 			Start_ = false;
 		}
 
@@ -87,13 +87,13 @@ void Sounds_t::killsound() {
 		{
 			if (pStats->headshots > HeadShotHolder)
 			{
-				SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.headshot, 0, nullptr);
+				Hook.playSound(sounds.headshot);
 				HeadShotHolder = pStats->headshots;
 			}
 
 			if (pStats->assists > AssistHolder)
 			{
-				SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.assist, 0, nullptr);
+				Hook.playSound(sounds.assist);
 				AssistHolder = pStats->assists;
 			}
 
@@ -103,107 +103,107 @@ void Sounds_t::killsound() {
 
 				if (KillTotal == 1 && !bFirstBlood)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.firstblood, 0, nullptr);
+					Hook.playSound(sounds.firstblood);
 					bFirstBlood = true;
 				}
 				else if (KillTotal == 2 && !bDoublekill)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.doublekill, 0, nullptr);
+					Hook.playSound(sounds.doublekill);
 					bDoublekill = true;
 				}
 				else if (KillTotal == 3 && !bTriplekill)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.tripplekill, 0, nullptr);
+					Hook.playSound(sounds.tripplekill);
 					bTriplekill = true;
 				}
 				else if (KillTotal == 4 && !bExcellent)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.excellent, 0, nullptr);
+					Hook.playSound(sounds.excellent);
 					bExcellent = true;
 				}
 				else if (KillTotal == 5 && !bImpressive)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.impressive, 0, nullptr);
+					Hook.playSound(sounds.impressive);
 					bImpressive = true;
 				}
 				else if (KillTotal == 6 && !bKillingspree)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.killingspree, 0, nullptr);
+					Hook.playSound(sounds.killingspree);
 					bKillingspree = true;
 				}
 				else if (KillTotal >= 7 && !bMultikill)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.multikill, 0, nullptr);
+					Hook.playSound(sounds.multikill);
 					bMultikill = true;
 				}
 				else if (KillTotal >= 10 && !bUltrakill)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.ultrakill, 0, nullptr);
+					Hook.playSound(sounds.ultrakill);
 					bUltrakill = true;
 				}
 				else if (KillTotal >= 12 && !bDominating)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.dominating, 0, nullptr);
+					Hook.playSound(sounds.dominating);
 					bDominating = true;
 				}
 				else if (KillTotal >= 15 && !bUnstoppable)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.unstoppable, 0, nullptr);
+					Hook.playSound(sounds.unstoppable);
 					bUnstoppable = true;
 				}
 				else if (KillTotal >= 20 && !bMonsterkill)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.monsterkill, 0, nullptr);
+					Hook.playSound(sounds.monsterkill);
 					bMonsterkill = true;
 				}
 				else if (KillTotal >= 23 && !bWickedSick)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.wickedsick, 0, nullptr);
+					Hook.playSound(sounds.wickedsick);
 					bWickedSick = true;
 				}
 				else if (KillTotal >= 25 && !blaught_0)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.laughtspy, 0, nullptr);
+					Hook.playSound(sounds.laughtspy);
 					blaught_0 = true;
 				}
 				else if (KillTotal >= 30 && !bGodlike)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.godlike, 0, nullptr);
+					Hook.playSound(sounds.godlike);
 					bGodlike = true;
 				}
 				else if (KillTotal >= 35 && !bLudicrouskill)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.ludicrouskill, 0, nullptr);
+					Hook.playSound(sounds.ludicrouskill);
 					bLudicrouskill = true;
 				}
 				else if (KillTotal >= 40 && !bHolyshit)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.holyshit, 0, nullptr);
+					Hook.playSound(sounds.holyshit);
 					bHolyshit = true;
 				}
 				else if (KillTotal >= 45 && !bRampage)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.rampage, 0, nullptr);
+					Hook.playSound(sounds.rampage);
 					bRampage = true;
 				}
 				else if (KillTotal >= 50 && !blaught_1)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.laughtscout, 0, nullptr);
+					Hook.playSound(sounds.laughtscout);
 					blaught_1 = true;
 				}
 				else if (KillTotal >= 60 && !blaught_2)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.laughtdemoman, 0, nullptr);
+					Hook.playSound(sounds.laughtdemoman);
 					blaught_2 = true;
 				}
 				else if (KillTotal >= 65 && !blaught_3)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.laughtmedic, 0, nullptr);
+					Hook.playSound(sounds.laughtmedic);
 					blaught_3 = true;
 				}
 				else if (KillTotal >= 70 && !blaught_4)
 				{
-					SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.laughtsniper, 0, nullptr);
+					Hook.playSound(sounds.laughtsniper);
 					blaught_4 = true;
 				}
 

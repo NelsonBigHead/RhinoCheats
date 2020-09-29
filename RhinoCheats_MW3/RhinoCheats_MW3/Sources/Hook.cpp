@@ -1187,8 +1187,8 @@ void Hook_t::MakeJMP(BYTE *pAddress, DWORD dwJumpTo, DWORD dwLen)
 
 }
 
-void Hook_t::playSound(LPVOID HackPath) {	
-	PlaySound(reinterpret_cast<char*>(HackPath), nullptr, SND_APPLICATION | SND_FILENAME | SND_ASYNC);
+void Hook_t::playSound(LPCSTR HackPath) {	
+	PlaySound(HackPath, nullptr, SND_NODEFAULT | SND_FILENAME | SND_ASYNC);
 }
 
 void Hook_t::CreateFolder(const char * path)
@@ -1283,7 +1283,7 @@ void Hook_t::ExecMainThread()
 			// Level 5
 			if (Handle_GetAKSThread && Handle_ForceHostThread)
 			{
-				SafeCreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Hook.playSound), sounds.activated, 0, nullptr);
+				Hook.playSound(sounds.activated);
 			}
 			else
 			{
