@@ -3,7 +3,7 @@
 class NoSpread_t
 {
 public:
-	void ApplyNoSpread(usercmd_t * cmd, int seed);	
+	void ApplyNoSpread(usercmd_t * cmd);	
 
 private:
 	void FirstBulletFix();

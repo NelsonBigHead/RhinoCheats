@@ -36,7 +36,7 @@ void NoSpread_t::GetWeaponSpread(float*Spread)
 	*Spread = baseSpread + ((maxSpread - baseSpread) * (*reinterpret_cast<float*>(Offsets::nospread_numerator) / 255.0f));
 }
 
-void NoSpread_t::ApplyNoSpread(usercmd_t *cmd, int seed)
+void NoSpread_t::ApplyNoSpread(usercmd_t *cmd)
 {	
 	if (Settings[no_spread].Value.bValue &&  
 		*(BYTE *)Offsets::zoom == NULL)
@@ -48,20 +48,20 @@ void NoSpread_t::ApplyNoSpread(usercmd_t *cmd, int seed)
 		//========================================================================
 		//By OGCz, great job mate congratz :)
 		
-		int SeedTransform = 214013 * (214013 * (214013 * (214013 * (214013 * seed + 2531011) + 2531011) + 2531011) + 2531011) + 2531011;
+		int SeedTransform = 214013 * (214013 * (214013 * (214013 * (214013 * cmd->servertime + 2531011) + 2531011) + 2531011) + 2531011) + 2531011;
 		
 		//double random1 = ((unsigned int)SeedTransform >> 17)*0.000030517578125*360.0*0.017453292384369; <<<
 		                                                                                 
-		  double random1 = ((unsigned int)SeedTransform >> 17)*0.000030517578125*360.0*0.01745329238474369; //from the game...
+		double random1 = ((unsigned int)SeedTransform >> 17)*0.000030517578125*360.0*0.01745329238474369; //from the game...
 
 		//sub_421E40                                                                   
 		double random2 = ((unsigned int)(214013 * SeedTransform + 2531011) >> 17)*0.000030517578125;
 
-		spreadX = cos(random1)*random2*-weaponSpread;
-		spreadY = sin(random1)*random2*-weaponSpread;
+		spreadX = cos(random1)*random2*weaponSpread;
+		spreadY = sin(random1)*random2*weaponSpread;
 
-		cmd->viewangles[0] -= ANGLE2SHORT(spreadY);
-		cmd->viewangles[1] -= ANGLE2SHORT(spreadX);
+		cmd->viewangles[0] += ANGLE2SHORT(spreadY);
+		cmd->viewangles[1] += ANGLE2SHORT(spreadX);
 		
 	}
 

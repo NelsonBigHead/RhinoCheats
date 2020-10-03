@@ -77,7 +77,7 @@ void GetWeaponSpreadVector(vec3_t vWeaponStartPos, vec3_t endVec, int iSeed, flo
 //========================================================================
 
 
-void NoSpread_t::ApplyNoSpread(usercmd_t *cmd, int seed)
+void NoSpread_t::ApplyNoSpread(usercmd_t *cmd)
 {	
 	if (Settings[no_spread].Value.bValue && 
 		!ci[cg->clientNum].zooming)
@@ -86,36 +86,10 @@ void NoSpread_t::ApplyNoSpread(usercmd_t *cmd, int seed)
 
 		GetWeaponSpread(&weaponSpread);		
 
-		/*vec3_t WeaponViewAngle, ForwardVec, RightVec, UpVec, Spreaded, SpreadedAngles, Fix;
-		WeaponViewAngle[0] = punch->weaponViewAngle_0;
-		WeaponViewAngle[1] = punch->weaponViewAngle_1;
-		WeaponViewAngle[2] = 0.0f;	
-
-		Math.AngleVectors(WeaponViewAngle, ForwardVec, RightVec, UpVec);
-		GetWeaponSpreadVector(refdef->vieworg, Spreaded, seed, weaponSpread, ForwardVec, RightVec, UpVec);
-
-		VectorSubtract(Spreaded, refdef->vieworg, Spreaded);
-		Math.VecToAngles(Spreaded, SpreadedAngles);
-		VectorSubtract(WeaponViewAngle, SpreadedAngles, Fix);	
-
-
-		if (Settings[silent_aim].Value.bValue &&
-			Aim.isReady[Aim_t::isReadyforFire] &&			
-			!Settings[third_person].Value.bValue)
-		{
-			cmd->viewangles[1] = ANGLE2SHORT(Fix[1] + pViewMatrix->viewAngleX + Aim.vAimAngles[1]);
-			cmd->viewangles[0] = ANGLE2SHORT(Fix[0] + pViewMatrix->viewAngleY + Aim.vAimAngles[0]);
-		}
-		else  //Normal Spread Fix		
-		{  
-			cmd->viewangles[1] = ANGLE2SHORT(Fix[1] + pViewMatrix->viewAngleX);
-			cmd->viewangles[0] = ANGLE2SHORT(Fix[0] + pViewMatrix->viewAngleY);			
-		}*/
-		
 		//========================================================================
 		//By OGCz, great job mate congratz :)
 
-		int SeedTransform = 214013 * (214013 * (214013 * (214013 * (214013 * seed + 2531011) + 2531011) + 2531011) + 2531011) + 2531011;
+		int SeedTransform = 214013 * (214013 * (214013 * (214013 * (214013 * cmd->servertime + 2531011) + 2531011) + 2531011) + 2531011) + 2531011;
 
 		//double random1 = ((unsigned int)SeedTransform >> 17)*0.000030517578125*360.0*0.017453292384369; <<<
 
@@ -124,11 +98,11 @@ void NoSpread_t::ApplyNoSpread(usercmd_t *cmd, int seed)
 	    //sub_421E40                                                                   
 		double random2 = ((unsigned int)(214013 * SeedTransform + 2531011) >> 17)*0.000030517578125;
 
-		spreadX = cos(random1)*random2*-weaponSpread;
-		spreadY = sin(random1)*random2*-weaponSpread;
+		spreadX = cos(random1)*random2*weaponSpread;
+		spreadY = sin(random1)*random2*weaponSpread;
 
-		cmd->viewangles[0] -= ANGLE2SHORT(spreadY);
-		cmd->viewangles[1] -= ANGLE2SHORT(spreadX);	
+		cmd->viewangles[0] += ANGLE2SHORT(spreadY);
+		cmd->viewangles[1] += ANGLE2SHORT(spreadX);	
 	
 	}
 

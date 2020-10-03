@@ -421,9 +421,11 @@ void Aim_t::AutoKnife()
 	if (!bMelee && isReady[isReadyforKnife])
 	{
 		VectorSubtract(vAimLocation, refdef->vieworg, vDelta);
-		VectorNormalize(vDelta);
-		pViewMatrix->viewAngleX += Math.Degrees(asinf(DotProduct(refdef->viewaxis[1], vDelta)));
-		pViewMatrix->viewAngleY += Math.Degrees(-asinf(DotProduct(refdef->viewaxis[2], vDelta)));
+		Math.VecToAngles(vDelta, vAimAngles);
+		vAimAngles[1] -= punch->weaponViewAngle_1;
+		vAimAngles[0] -= punch->weaponViewAngle_0;
+		pViewMatrix->viewAngleX += vAimAngles[1];
+		pViewMatrix->viewAngleY += vAimAngles[0];
 
 		key_input->realmelee.wasPressed = 1;
 		bMelee = true;
@@ -481,9 +483,11 @@ void Aim_t::PerformAimbot()
 				}
 				else
 				{
-					VectorNormalize(vDelta);
-					pViewMatrix->viewAngleX += Math.Degrees(asinf(DotProduct(refdef->viewaxis[1], vDelta)));
-					pViewMatrix->viewAngleY += Math.Degrees(-asinf(DotProduct(refdef->viewaxis[2], vDelta)));
+					Math.VecToAngles(vDelta, vAimAngles);
+					vAimAngles[1] -= punch->weaponViewAngle_1;
+					vAimAngles[0] -= punch->weaponViewAngle_0;
+					pViewMatrix->viewAngleX += vAimAngles[1];
+					pViewMatrix->viewAngleY += vAimAngles[0];
 				}				
 			}
 			else
@@ -509,9 +513,11 @@ void Aim_t::PerformAimbot()
 			{
 				if (isReady[isReadyforFire])
 				{
-					VectorNormalize(vDelta);
-					pViewMatrix->viewAngleX += Math.Degrees(asinf(DotProduct(refdef->viewaxis[1], vDelta)));
-					pViewMatrix->viewAngleY += Math.Degrees(-asinf(DotProduct(refdef->viewaxis[2], vDelta)));
+					Math.VecToAngles(vDelta, vAimAngles);
+					vAimAngles[1] -= punch->weaponViewAngle_1;
+					vAimAngles[0] -= punch->weaponViewAngle_0;
+					pViewMatrix->viewAngleX += vAimAngles[1];
+					pViewMatrix->viewAngleY += vAimAngles[0];
 				}				
 			}
 		}	

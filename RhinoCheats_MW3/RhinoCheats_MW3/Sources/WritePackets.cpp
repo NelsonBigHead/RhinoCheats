@@ -92,12 +92,12 @@ void MovementFix(usercmd_t* usercmd, float yaw, float oldyaw, float forward, flo
 	usercmd->rightmove = ClampMove((char)(sinf(flDelta) * forward + cosf(flDelta) * right));
 }
 
-void DoCurCmd(usercmd_t *curCmd, int seed)
+void DoCurCmd(usercmd_t *curCmd)
 {		
 	if (Settings[auto_shoot].Value.bValue && Aim.isReady[Aim_t::isReadyforFire])
 		curCmd->buttons |= BUTTON_FIRE;
 
-	Nospread.ApplyNoSpread(curCmd, seed);
+	Nospread.ApplyNoSpread(curCmd);
 
 	if (Settings[silent_aim].Value.bValue && Aim.isReady[Aim_t::isReadyforFire] && !Settings[third_person].Value.bValue)
 	{
@@ -209,6 +209,6 @@ void PredictPlayerState()
 				oldCmd->buttons |= BUTTON_FIRE;
 		}
 
-		Nospread.ApplyNoSpread(oldCmd, oldCmd->servertime);
+		Nospread.ApplyNoSpread(oldCmd);
 	}
 }

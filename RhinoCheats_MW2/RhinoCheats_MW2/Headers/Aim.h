@@ -36,7 +36,7 @@ public:
 	bool g_bAimbotKey[g_bAimbotKey_];
 	bool isReady[isReady_];	
 
-	vec2_t vAimAngles;
+	vec3_t vAimAngles;
 	vec3_t vAimLocation;
 	bool isVehicle;
 
@@ -46,7 +46,7 @@ public:
 		isReady[isReady_] = { false };
 
 		vAimAngles[2] = { 0.0f };
-		vAimLocation[3] = { 0.0f };
+		vAimLocation[2] = { 0.0f };
 		isVehicle = false;
 	}
 

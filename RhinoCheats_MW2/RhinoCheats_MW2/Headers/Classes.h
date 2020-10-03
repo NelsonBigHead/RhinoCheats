@@ -44,11 +44,11 @@ typedef struct  {
 	int servertime; //0x0000 
 	int buttons; //0x0004 
 	int viewangles[3]; //0x0008 // below here is some usefull stuffs
-	char weapon;
+	char _0x14[0x6];
 	char forwardmove;
 	char rightmove;
 	char upmove;
-	char lol[16];
+	char _0x1D[0xB];
 }usercmd_t;
 
 typedef struct

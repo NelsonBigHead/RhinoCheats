@@ -61,19 +61,13 @@ union Weapon {
 
 typedef struct  {
 	int servertime; //0-4
-	unsigned int buttons; //4-8
+	int buttons; //4-8
 	int viewangles[3]; //8-14
-	Weapon weapon; //14 - 18
-	Weapon offHand; //18-1c
+	char _0x14[0x8];
 	char forwardmove; //1c
 	char rightmove; //1d
-	unsigned short airburstMarkDistance; //1E - 20
-	unsigned short meleeChargeEnt; //20 - 22
-	char meleeChargeDist; //22
-	char selectedLoc[2]; //23 - 25
-	char selectedLocAngle; //26
-	unsigned short sightedClientsMask; //26 - 2A
-	unsigned short spawnTraceEntIndex; //2A - 2C
+	char upmove; //1e
+	char _0x1F[0xD];
 }usercmd_t;
 
 typedef struct
