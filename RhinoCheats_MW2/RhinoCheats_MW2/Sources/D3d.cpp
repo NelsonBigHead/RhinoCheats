@@ -41,14 +41,14 @@ union DvarValue {
 	float vec3[3];
 	float vec4[4];
 	const char* string;
-	char color[4];	
+	char color[4];
 };
 
 struct DvarLimitsEnumeration {
 	int stringCount;
 	const char** strings;
 
-	int findIndexForString(const char* input) 
+	int findIndexForString(const char* input)
 	{
 		if (input == nullptr) {
 			return 0;
@@ -66,19 +66,19 @@ struct DvarLimitsEnumeration {
 
 struct DvarLimitsInteger {
 	int min;
-	int max;	
+	int max;
 };
 
 struct DvarLimitsValue {
 	float min;
-	float max;	
+	float max;
 };
 
 union DvarLimits {
 	DvarLimitsEnumeration enumeration;
 	DvarLimitsInteger integer;
 	DvarLimitsValue value;
-	DvarLimitsValue vector;	
+	DvarLimitsValue vector;
 };
 
 struct dvar_s {
@@ -92,7 +92,7 @@ struct dvar_s {
 	DvarValue reset;
 	DvarLimits domain;
 	dvar_s* next;
-	int hashNext;	
+	int hashNext;
 };
 
 enum UPNP_NatType {
@@ -117,12 +117,12 @@ UPNP_NatType* m_natType;
 
 void InitHostVars()
 {
-	m_connectTimeOut = FindDvar("party_connectTimeout"); 
+	m_connectTimeOut = FindDvar("party_connectTimeout");
 	XASSERT(m_connectTimeOut)
 
-	m_bandwithTestEnabled = FindDvar("bandwidthtest_enable");
+		m_bandwithTestEnabled = FindDvar("bandwidthtest_enable");
 	XASSERT(m_bandwithTestEnabled);
-	
+
 	m_autoTeams = FindDvar("party_autoTeams");
 	XASSERT(m_autoTeams);
 
@@ -133,14 +133,14 @@ void InitHostVars()
 	XASSERT(m_requireOpenNat);
 
 	m_doWeSuckAsHost = reinterpret_cast<bool*>(0x6427E66);
-	m_natType = reinterpret_cast<UPNP_NatType*>(0x85CCC0);	
+	m_natType = reinterpret_cast<UPNP_NatType*>(0x85CCC0);
 }
 
 
 //========================================================================
 
 namespace D3D
-{	   	
+{
 	cSprite* pD3DSprite = nullptr;
 
 	cSprite::cSprite()
@@ -193,17 +193,17 @@ namespace D3D
 		if (!pTex)
 		{
 			std::string texfile = texturesFolder;
-			texfile +=	"texture-2.png";
+			texfile += "texture-2.png";
 
 			D3DXCreateTextureFromFileEx(pDev, texfile.c_str(), width, height,
 				D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_DEFAULT,
 				D3DX_DEFAULT, 0, NULL, NULL, &pTex);
 			if (!pTex)
-			{	
+			{
 				//Todo: move this to imgui
 				SafeMessageBox(HWND_DESKTOP,
 					STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.").c_str(), ALASKA17, MB_ICONWARNING);
-						
+
 				return result;
 			}
 		}
@@ -263,7 +263,7 @@ namespace D3D
 
 	//Misc
 	char texturesFolder[MAX_PATH];
-	bool g_bWasInitialized = false;	
+	bool g_bWasInitialized = false;
 	bool g_bMainWindowOpen = false;
 	WNDPROC g_pOldWindowProc = nullptr;
 	HWND g_hWindow = nullptr;
@@ -280,8 +280,8 @@ namespace D3D
 	ImVec2 keysize = ImVec2(0.0f, 0.0f);
 	ImVec2 infoSize = ImVec2(0.0f, 0.0f);
 	*/
-		   	  		
-	
+
+
 	/************************************************************************/
 	/* Styles                                                               */
 	/************************************************************************/
@@ -540,8 +540,8 @@ namespace D3D
 	// Thanks IUF :)
 
 	void StyleTabColors(ImVec4* colors)
-	{		
-		ImGui::TabLabelStyle &tabStyle = ImGui::TabLabelStyle::Get();
+	{
+		ImGui::TabLabelStyle& tabStyle = ImGui::TabLabelStyle::Get();
 		tabStyle.colors[ImGui::TabLabelStyle::Col_TabLabelHovered] = ImGui::ColorConvertFloat4ToU32(colors[ImGuiCol_HeaderHovered]);
 		tabStyle.colors[ImGui::TabLabelStyle::Col_TabLabelActive] = ImGui::ColorConvertFloat4ToU32(colors[ImGuiCol_HeaderActive]);
 		tabStyle.colors[ImGui::TabLabelStyle::Col_TabLabelSelected] = ImGui::ColorConvertFloat4ToU32(colors[ImGuiCol_Button]);
@@ -1112,7 +1112,7 @@ namespace D3D
 		StyleTabColors(colors);
 
 	}
-	
+
 	void SetStyle()
 	{
 		ImGui::PushItemWidth(130);
@@ -1144,10 +1144,10 @@ namespace D3D
 		ImGui::Spacing();
 
 		ImGui::Checkbox("Rainbow effect for the background", &Settings[style_rainbow].Value.bValue);
-		
+
 	}
 
-	
+
 
 	/************************************************************************/
 	/* Load & Save Settings                                                 */
@@ -1297,18 +1297,19 @@ namespace D3D
 				Commands.push_back("rc_prestige");
 				//Commands.push_back("rc_tokens");
 				//Commands.push_back("rc_31");
-				
+
 				Commands.push_back("rc_unlock");
 				Commands.push_back("rc_reset");
 
 				Commands.push_back("rc_godmode");
 				Commands.push_back("rc_noclip");
 				Commands.push_back("rc_maxammo");
+				Commands.push_back("rc_autowall");
 				//Commands.push_back("rc_derank");
 				//Commands.push_back("rc_rerank");
 				Commands.push_back("disconnect");
 				Commands.push_back("quit");
-							
+
 
 				/*for (int i = 0; i < Commands.Size; i++)
 				AddLog("Command[%i]: %s", i, Commands[i]);*/
@@ -1324,7 +1325,7 @@ namespace D3D
 		// Portable helpers
 		static int   Stricmp(const char* str1, const char* str2) { int d; while ((d = toupper(*str2) - toupper(*str1)) == 0 && *str1) { str1++; str2++; } return d; }
 		static int   Strnicmp(const char* str1, const char* str2, int n) { int d = 0; while (n > 0 && (d = toupper(*str2) - toupper(*str1)) == 0 && *str1) { str1++; str2++; n--; } return d; }
-		static char* Strdup(const char *str) { size_t len = strlen(str) + 1; void* buff = malloc(len); return (char*)memcpy(buff, (const void*)str, len); }
+		static char* Strdup(const char* str) { size_t len = strlen(str) + 1; void* buff = malloc(len); return (char*)memcpy(buff, (const void*)str, len); }
 
 		void    ClearLog()
 		{
@@ -1348,11 +1349,11 @@ namespace D3D
 		}
 
 		void    Draw(const char* title, bool* p_open)
-		{		
+		{
 			// (Load Saved Window Settings)....
 			static bool bFirstTime4Console = false;
 			if (!bFirstTime4Console)
-			{				
+			{
 				LoadWindowsSettings();
 				bFirstTime4Console = true;
 			}
@@ -1405,10 +1406,11 @@ namespace D3D
 				AddLog("10. rc_godmode <on|off>\n\t\tGives you god mode (RCE).");
 				AddLog("11. rc_noclip <on|off>\n\t\tGives you no clip (RCE).");
 				AddLog("12. rc_maxammo\n\t\tGives you max ammo (RCE).");
+				AddLog("13. rc_autowall\n\t\tGives you host autowall (RCE).");
 				//AddLog("10. rc_derank <id>\n\t\tDerank the player by id, (without id): Show the player list.");
 				//AddLog("11. rc_rerank <id>\n\t\tRerank the player by id, (without id): Show the player list.");
-				AddLog("13. disconnect\n\t\tDisconnect from the game.");
-				AddLog("14. quit\n\t\tQuit the game.");
+				AddLog("14. disconnect\n\t\tDisconnect from the game.");
+				AddLog("15. quit\n\t\tQuit the game.");
 
 			}ImGui::SameLine();
 			if (ImGui::SmallButton("Clear")) { ClearLog(); } ImGui::SameLine();
@@ -1487,7 +1489,7 @@ namespace D3D
 			if (reclaim_focus)
 				ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
 
-			ImGui::End();			
+			ImGui::End();
 		}
 
 		typedef struct
@@ -1497,15 +1499,15 @@ namespace D3D
 			char cmdArgs[256][256];
 		} cmdline_t;
 
-		void SplitCommandLine(const char *inCMDLine, cmdline_t *outInfo)
+		void SplitCommandLine(const char* inCMDLine, cmdline_t* outInfo)
 		{
 			memset(outInfo, 0, sizeof(cmdline_t));
 
 			int len = strlen(inCMDLine) + 1;
-			char *cmdbuf = new char[len];
+			char* cmdbuf = new char[len];
 			strcpy_s(cmdbuf, len, inCMDLine);
 
-			char *token = strtok(cmdbuf, " ");
+			char* token = strtok(cmdbuf, " ");
 			while (token != nullptr)
 			{
 				if (outInfo->argNum == 0)
@@ -1575,82 +1577,82 @@ namespace D3D
 				RCEManager::RCE_Call(0x5853E0);
 				AddLog("rc_fastrestart done.");
 			}
-// 			else if (Stricmp(Output.cmdName, "rc_maprestart") == 0)
-// 			{
-// 				/*AddLog("rc_maprestart executed.");
-// 				if (!*(int*)Offsets::host)
-// 				{
-// 					AddLog("[error] you need to be host.");
-// 				}
-// 				else
-// 				{
-// 					//0056EF50   83EC 44          SUB ESP, 0x44
-// 					DWORD dwMr = 0x56F050;
-// 					__asm
-// 					{
-// 						push 0
-// 						push 0
-// 						call dwMr
-// 						add esp, 0x08
-// 					}
-// 				}
-// 				AddLog("rc_maprestart done.");*/
-// 			}
-// 			else if (Stricmp(Output.cmdName, "rc_scorelimit") == 0)
-// 			{
-// 				/*AddLog("rc_scorelimit executed.");
-// 
-// 				if (!*(int*)Offsets::host)
-// 				{
-// 					AddLog("[error] you need to be host.");
-// 				}
-// 				else
-// 				{
-// 					int limitValue = atoi(Output.cmdArgs[0]);
-// 					if (limitValue >= 0 && limitValue <= 999)
-// 					{
-// 						static char svBuf[50];
-// 						dvar_s *g_gametype = Engine.FindVar("g_gametype");
-// 						XASSERT(g_gametype);
-// 						sprintf_s(svBuf, "scr_%s_scorelimit %i", g_gametype->u6.sval, limitValue);
-// 						Engine.SendToConsole(svBuf);
-// 					}
-// 					else
-// 					{
-// 						AddLog("[error] the number need to be >= 0 and <= 999.");
-// 					}
-// 				}
-// 
-// 				AddLog("rc_scorelimit done.");*/
-// 			}
-// 			else if (Stricmp(Output.cmdName, "rc_timelimit") == 0)
-// 			{
-// 				/*AddLog("rc_timelimit executed.");
-// 
-// 				if (!*(int*)Offsets::host)
-// 				{
-// 					AddLog("[error] you need to be host.");
-// 				}
-// 				else
-// 				{
-// 					int limitValue = atoi(Output.cmdArgs[0]);
-// 					if (limitValue >= 0 && limitValue <= 999)
-// 					{
-// 						static char svBuf[50];
-// 						dvar_s *g_gametype = Engine.FindVar("g_gametype");
-// 						XASSERT(g_gametype);
-// 
-// 						sprintf_s(svBuf, "scr_%s_timelimit %i", g_gametype->u6.sval, limitValue);
-// 						Engine.SendToConsole(svBuf);
-// 					}
-// 					else
-// 					{
-// 						AddLog("[error] the number need to be >= 0 and <= 999.");
-// 					}
-// 				}
-// 
-// 				AddLog("rc_timelimit done.");*/
-// 			}
+			// 			else if (Stricmp(Output.cmdName, "rc_maprestart") == 0)
+			// 			{
+			// 				/*AddLog("rc_maprestart executed.");
+			// 				if (!*(int*)Offsets::host)
+			// 				{
+			// 					AddLog("[error] you need to be host.");
+			// 				}
+			// 				else
+			// 				{
+			// 					//0056EF50   83EC 44          SUB ESP, 0x44
+			// 					DWORD dwMr = 0x56F050;
+			// 					__asm
+			// 					{
+			// 						push 0
+			// 						push 0
+			// 						call dwMr
+			// 						add esp, 0x08
+			// 					}
+			// 				}
+			// 				AddLog("rc_maprestart done.");*/
+			// 			}
+			// 			else if (Stricmp(Output.cmdName, "rc_scorelimit") == 0)
+			// 			{
+			// 				/*AddLog("rc_scorelimit executed.");
+			// 
+			// 				if (!*(int*)Offsets::host)
+			// 				{
+			// 					AddLog("[error] you need to be host.");
+			// 				}
+			// 				else
+			// 				{
+			// 					int limitValue = atoi(Output.cmdArgs[0]);
+			// 					if (limitValue >= 0 && limitValue <= 999)
+			// 					{
+			// 						static char svBuf[50];
+			// 						dvar_s *g_gametype = Engine.FindVar("g_gametype");
+			// 						XASSERT(g_gametype);
+			// 						sprintf_s(svBuf, "scr_%s_scorelimit %i", g_gametype->u6.sval, limitValue);
+			// 						Engine.SendToConsole(svBuf);
+			// 					}
+			// 					else
+			// 					{
+			// 						AddLog("[error] the number need to be >= 0 and <= 999.");
+			// 					}
+			// 				}
+			// 
+			// 				AddLog("rc_scorelimit done.");*/
+			// 			}
+			// 			else if (Stricmp(Output.cmdName, "rc_timelimit") == 0)
+			// 			{
+			// 				/*AddLog("rc_timelimit executed.");
+			// 
+			// 				if (!*(int*)Offsets::host)
+			// 				{
+			// 					AddLog("[error] you need to be host.");
+			// 				}
+			// 				else
+			// 				{
+			// 					int limitValue = atoi(Output.cmdArgs[0]);
+			// 					if (limitValue >= 0 && limitValue <= 999)
+			// 					{
+			// 						static char svBuf[50];
+			// 						dvar_s *g_gametype = Engine.FindVar("g_gametype");
+			// 						XASSERT(g_gametype);
+			// 
+			// 						sprintf_s(svBuf, "scr_%s_timelimit %i", g_gametype->u6.sval, limitValue);
+			// 						Engine.SendToConsole(svBuf);
+			// 					}
+			// 					else
+			// 					{
+			// 						AddLog("[error] the number need to be >= 0 and <= 999.");
+			// 					}
+			// 				}
+			// 
+			// 				AddLog("rc_timelimit done.");*/
+			// 			}
 			else if (Stricmp(Output.cmdName, "rc_name") == 0)
 			{
 				AddLog("rc_name executed.");
@@ -1664,7 +1666,7 @@ namespace D3D
 					memcpy(abuf + strlen(abuf), tabuf, strlen(tabuf) + 1);
 				}
 
-				char *newName = strtok(abuf, "\n");
+				char* newName = strtok(abuf, "\n");
 				if (newName)
 				{
 					//strcpy((char*)Offsets::namegame, newName);
@@ -1725,7 +1727,7 @@ namespace D3D
 				}
 
 				AddLog("rc_prestige done.");
-			}			
+			}
 			else if (Stricmp(Output.cmdName, "quit") == 0)
 			{
 				exit(-1);
@@ -1739,7 +1741,7 @@ namespace D3D
 
 				AddLog("Disconnected.");
 			}
-			
+
 
 
 			//Derank-Rerank Here...
@@ -1807,13 +1809,37 @@ namespace D3D
 			{
 				AddLog("rc_maxammo executed.");
 
-				unsigned int first_ammo			= 0x1B0E1C0 + (cg->clientNum * 0x366C) + 0x36C;
-				unsigned int secondary_ammo		= 0x1B0E1C0 + (cg->clientNum * 0x366C) + 0x354;
+				unsigned int first_ammo = 0x1B0E1C0 + (cg->clientNum * 0x366C) + 0x36C;
+				unsigned int secondary_ammo = 0x1B0E1C0 + (cg->clientNum * 0x366C) + 0x354;
 
 				RCEManager::RCE_WriteUInt(first_ammo, INT_MAX);
 				RCEManager::RCE_WriteUInt(secondary_ammo, INT_MAX);
 
 				AddLog("rc_maxammo done.");
+			}
+			else if (Stricmp(Output.cmdName, "rc_autowall") == 0)
+			{
+				AddLog("rc_autowall executed.");
+
+				unsigned int dvar_addy_1 = (unsigned int)&perk_bulletPenetrationMultiplier->value;
+				unsigned int dvar_addy_2 = (unsigned int)&bullet_penetrationMinFxDist->value;
+				
+				if (strstr(Output.cmdArgs[0], "on"))
+				{
+					RCEManager::RCE_WriteUInt(dvar_addy_1, 0x7F7FFFFF);
+					RCEManager::RCE_WriteUInt(dvar_addy_2, 0x7F7FFFFF);
+				}
+				else if (strstr(Output.cmdArgs[0], "off"))
+				{
+					RCEManager::RCE_WriteUInt(dvar_addy_1, 0x40000000);
+					RCEManager::RCE_WriteUInt(dvar_addy_2, 0x41F00000);
+				}
+				else
+				{
+					AddLog("[error] the setting need to be on or off.");
+				}
+
+				AddLog("rc_autowall done.");
 			}
 			else if (Stricmp(Output.cmdName, "rc_reset") == 0)
 			{
@@ -1832,7 +1858,7 @@ namespace D3D
 
 				AddLog("rc_reset done.");
 			}
-						
+
 			else
 			{
 				AddLog("Unknown command: '%s'\n", command_line);
@@ -1954,12 +1980,12 @@ namespace D3D
 		console.Draw("Console", p_open);
 	}
 
-	
+
 	/************************************************************************/
 	/* Continue...                                                          */
 	/************************************************************************/
 
-	void SetTextureColor(IDirect3DTexture9 *texture, DWORD color)
+	void SetTextureColor(IDirect3DTexture9* texture, DWORD color)
 	{
 		if (texture == nullptr)
 			return;
@@ -1983,7 +2009,7 @@ namespace D3D
 
 		texture->UnlockRect(0);
 	}
-	
+
 	void GUI_Init(IDirect3DDevice9* pDevice)
 	{
 		if (g_hWindow && pDevice)
@@ -2005,8 +2031,8 @@ namespace D3D
 				texfile += "texture-1.jpg";
 				D3DXCreateTextureFromFile(pDevice, texfile.c_str(), &texWeaponCustom);
 				if (!texWeaponCustom)
-				{				
-					SafeMessageBox(HWND_DESKTOP, 
+				{
+					SafeMessageBox(HWND_DESKTOP,
 						STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.\nUsing normal textures.").c_str(), ALASKA17, MB_ICONWARNING);
 				}
 			}
@@ -2020,12 +2046,12 @@ namespace D3D
 				texfile += "texture-map.jpg";
 				D3DXCreateTextureFromFile(pDevice, texfile.c_str(), &texMap);
 				if (!texMap)
-				{					
-					SafeMessageBox(HWND_DESKTOP, 
+				{
+					SafeMessageBox(HWND_DESKTOP,
 						STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.").c_str(), ALASKA17, MB_ICONWARNING);
 				}
 			}
-			
+
 			ImGui::CreateContext();
 
 			//no imgui.ini
@@ -2036,8 +2062,8 @@ namespace D3D
 			StyleColorsAesir();
 
 			ImGui_ImplWin32_Init(g_hWindow);
-			ImGui_ImplDX9_Init(pDevice);	
-			
+			ImGui_ImplDX9_Init(pDevice);
+
 			//io.FontDefault = io.Fonts->Fonts[1];
 
 			g_bWasInitialized = true;
@@ -2112,7 +2138,7 @@ namespace D3D
 			// (Load Saved Window Settings)....
 			static bool bFirstTime4Radar = false;
 			if (!bFirstTime4Radar)
-			{				
+			{
 				LoadWindowsSettings();
 				bFirstTime4Radar = true;
 			}
@@ -2144,7 +2170,7 @@ namespace D3D
 			tagPOINT lp;
 			GetCursorPos(&lp);
 
-			static bool bSetValues = false;				
+			static bool bSetValues = false;
 			static DWORD dwRestore = 0;
 			static int iOldMousePos[] = { 0, 0 };
 
@@ -2152,7 +2178,7 @@ namespace D3D
 			{
 				dwRestore = *(PDWORD)Offsets::mouse;
 				*(PDWORD)Offsets::mouse = 0;
-		
+
 
 				iOldMousePos[0] = lp.x;
 				iOldMousePos[1] = lp.y;
@@ -2163,7 +2189,7 @@ namespace D3D
 			{
 				SetCursorPos(iOldMousePos[0], iOldMousePos[1]);
 
-				*(PDWORD)Offsets::mouse = dwRestore;				
+				*(PDWORD)Offsets::mouse = dwRestore;
 
 				bSetValues = false;
 			}
@@ -2174,7 +2200,7 @@ namespace D3D
 			// (Load Saved Window Settings)....
 			static bool bFirstTime4Menu = false;
 			if (!bFirstTime4Menu)
-			{						
+			{
 				LoadWindowsSettings();
 				bFirstTime4Menu = true;
 			}
@@ -2206,9 +2232,9 @@ namespace D3D
 					static int optionalHoveredTab = 0;
 					const bool tabSelectedChanged = ImGui::TabLabels(numTabs, tabNames, selectedTab, /*tabTooltips*/nullptr, false, &optionalHoveredTab, &tabItemOrdering[0], false);
 
-					ImGui::TabLabelStyle &tabStyle = ImGui::TabLabelStyle::Get();
+					ImGui::TabLabelStyle& tabStyle = ImGui::TabLabelStyle::Get();
 					tabStyle.colors[ImGui::TabLabelStyle::Col_TabLabelSelected] = ImGui::ColorConvertFloat4ToU32(colRainBow);
-					ImGuiStyle &style = ImGui::GetStyle();
+					ImGuiStyle& style = ImGui::GetStyle();
 					tabStyle.colors[ImGui::TabLabelStyle::Col_TabLabelHovered] = ImGui::ColorConvertFloat4ToU32(style.Colors[ImGuiCol_HeaderHovered]);
 
 					switch (tabItemOrdering[selectedTab])
@@ -2858,24 +2884,24 @@ namespace D3D
 
 								InitHostVars();
 							}
-							
+
 
 							if (ImGui::Checkbox("Force host", &Settings[host_forcehost].Value.bValue))
 							{
 								static bool bNonHost = true;
 								if (Settings[host_forcehost].Value.bValue && !*(int*)(Offsets::host) && bNonHost)
-								{									
+								{
 									m_connectTimeOut->current.integer = 1;
 									m_bandwithTestEnabled->current.enabled = false;
 									m_autoTeams->current.enabled = true;
 									m_maxTeamDifference->current.integer = 18;
 									m_requireOpenNat->current.enabled = false;
 									*m_doWeSuckAsHost = false;
-									*m_natType = NAT_OPEN;									
+									*m_natType = NAT_OPEN;
 
 									Engine.SendToConsole("xblive_privatematch 1; ui_gametype dm; xpartygo; xblive_privatematch 0;\n");
 
-									bNonHost = false;									
+									bNonHost = false;
 								}
 								else if (!Settings[host_forcehost].Value.bValue && !bNonHost)
 								{
@@ -2883,7 +2909,7 @@ namespace D3D
 									m_bandwithTestEnabled->current.enabled = m_bandwithTestEnabled->reset.enabled;
 									m_autoTeams->current.enabled = m_autoTeams->reset.enabled;
 									m_maxTeamDifference->current.integer = m_maxTeamDifference->reset.integer;
-									m_requireOpenNat->current.enabled = m_requireOpenNat->reset.enabled;															
+									m_requireOpenNat->current.enabled = m_requireOpenNat->reset.enabled;
 
 									bNonHost = true;
 								}
@@ -2899,7 +2925,7 @@ namespace D3D
 										m_maxTeamDifference->current.integer = 18;
 										m_requireOpenNat->current.enabled = false;
 										*m_doWeSuckAsHost = false;
-										*m_natType = NAT_OPEN;										
+										*m_natType = NAT_OPEN;
 
 										Engine.SendToConsole("xblive_privatematch 1; xpartygo;\n");
 
@@ -2941,18 +2967,18 @@ namespace D3D
 
 								ImGui::SameLine(xSize - 270);*/
 
-// 								ImGui::Checkbox("Auto wall", &Settings[host_autowall].Value.bValue);
-// 								ImGui::SameLine(XmodSize);
-								ImGui::Checkbox("Anti EndGame", &Settings[host_antiendgame].Value.bValue);	
+								// 								ImGui::Checkbox("Auto wall", &Settings[host_autowall].Value.bValue);
+								// 								ImGui::SameLine(XmodSize);
+								ImGui::Checkbox("Anti EndGame", &Settings[host_antiendgame].Value.bValue);
 
-// 								ImGui::Spacing();
-// 
-// 								ImGui::Checkbox("Kill cam", &Settings[host_killcam].Value.bValue);
-// 
-// 								ImGui::SameLine(XmodSize);
-// 								ImGui::PushItemWidth(90);
-// 								ImGui::SliderInt("Party Size", &Settings[host_partysize].Value.iValue, 2, 18);
-// 								ImGui::PopItemWidth();									
+								// 								ImGui::Spacing();
+								// 
+								// 								ImGui::Checkbox("Kill cam", &Settings[host_killcam].Value.bValue);
+								// 
+								// 								ImGui::SameLine(XmodSize);
+								// 								ImGui::PushItemWidth(90);
+								// 								ImGui::SliderInt("Party Size", &Settings[host_partysize].Value.iValue, 2, 18);
+								// 								ImGui::PopItemWidth();									
 							}
 
 							if (!Settings[host_forcehost].Value.bValue)
@@ -2979,7 +3005,7 @@ namespace D3D
 							ImGui::Text("Numpad 7: Force class 7");
 							ImGui::Text("Numpad 8: Force class 8");
 							ImGui::Text("Numpad 9: Force class 9");
-							ImGui::Text("Numpad 0: Force class 10");							
+							ImGui::Text("Numpad 0: Force class 10");
 						}
 						ImGui::EndChild();
 						break;
@@ -3081,11 +3107,11 @@ namespace D3D
 			// (Load Saved Window Settings)....
 			static bool bFirstTime4ShowInfo = false;
 			if (!bFirstTime4ShowInfo)
-			{				
+			{
 				LoadWindowsSettings();
 				bFirstTime4ShowInfo = true;
 			}
-			
+
 			ImGui::SetNextWindowPos(Settings[window_info_pos].Value.v2Value, ImGuiSetCond_Appearing);
 
 			ImGui::Begin("Info", &Settings[show_info].Value.bValue, Settings[window_info_size].Value.v2Value, -1.0f, ImGuiWindowFlags_NoCollapse);
@@ -3095,7 +3121,7 @@ namespace D3D
 				if (cg)
 					ImGui::Text("Client Num: %i", cg->clientNum);
 
-				int ping = *reinterpret_cast<int *>(Offsets::ping);
+				int ping = *reinterpret_cast<int*>(Offsets::ping);
 				int host = *reinterpret_cast<int*>(Offsets::host);
 
 				ImGui::Text("Ping: %i", ping);
@@ -3105,13 +3131,13 @@ namespace D3D
 				else
 					ImGui::Text("Non HOST");
 
-				char *pName = reinterpret_cast<char*>(Offsets::namegame);
+				char* pName = reinterpret_cast<char*>(Offsets::namegame);
 				if (pName)
 					ImGui::Text("Name: %s", pName);
 
 				if (cg_entities != nullptr)
 				{
-					weapon_t *pMYWEAPON = Engine.GetCombatWeapon(cg_entities[cg->clientNum].weaponID);
+					weapon_t* pMYWEAPON = Engine.GetCombatWeapon(cg_entities[cg->clientNum].weaponID);
 					if (pMYWEAPON)
 					{
 						if (pMYWEAPON->szLocalizedName/*szName*/ && !Aim.isVehicle)
@@ -3161,12 +3187,12 @@ namespace D3D
 		if (g_bMainWindowOpen && Settings[show_console].Value.bValue)
 			ShowConsole(&Settings[show_console].Value.bValue);
 	}
-	
+
 	void DrawBackgroundImage(IDirect3DDevice9* pDevice)
-	{			
+	{
 		static std::string texfile;
 		texfile = texturesFolder;
-		texfile += "texture-2.jpg";		
+		texfile += "texture-2.jpg";
 
 		static bool bSprite = false;
 		if (!bSprite)
@@ -3184,11 +3210,11 @@ namespace D3D
 			// Resizing (slow, but it works)
 			// Todo: implement a better way
 
-			static ImVec2 msizetemp = msize;			
+			static ImVec2 msizetemp = msize;
 
 			// both
 			if (msizetemp.x != msize.x && msizetemp.y != msize.y)
-			{				
+			{
 				pD3DSprite->Release();
 				delete pD3DSprite;
 				pD3DSprite = new cSprite(mpos.x, mpos.y);
@@ -3196,7 +3222,7 @@ namespace D3D
 				{
 					pD3DSprite->Init(pDevice, texfile.c_str(), msize.x, msize.y);
 					msizetemp.x = msize.x;
-					msizetemp.y = msize.y;					
+					msizetemp.y = msize.y;
 				}
 			}
 			// only x
@@ -3208,7 +3234,7 @@ namespace D3D
 				if (pD3DSprite)
 				{
 					pD3DSprite->Init(pDevice, texfile.c_str(), msize.x, msize.y);
-					msizetemp.x = msize.x;					
+					msizetemp.x = msize.x;
 				}
 			}
 			// only y
@@ -3220,10 +3246,10 @@ namespace D3D
 				if (pD3DSprite)
 				{
 					pD3DSprite->Init(pDevice, texfile.c_str(), msize.x, msize.y);
-					msizetemp.y = msize.y;					
+					msizetemp.y = msize.y;
 				}
-			}			
-			
+			}
+
 
 			if (pD3DSprite && pD3DSprite->IsInit() && g_bMainWindowOpen)
 			{
@@ -3315,7 +3341,7 @@ namespace D3D
 			{
 				DrawRadar();
 				DrawMenu();
-				DrawInfo();	
+				DrawInfo();
 				DrawConsole();
 				DrawBackgroundImage(pDevice);
 			}
@@ -3324,7 +3350,7 @@ namespace D3D
 			ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
 
-			
+
 
 		}
 
@@ -3350,10 +3376,10 @@ namespace D3D
 
 	//========================================================================
 
-	DrawIndexedPrimitive_t OrigDrawIndexedPrimitive = nullptr;	
+	DrawIndexedPrimitive_t OrigDrawIndexedPrimitive = nullptr;
 	DWORD model = 0; DWORD weapon = 0; DWORD smoke = 0; DWORD specialval = 0;
-	
-	bool bTeamAxis(char *pModel)
+
+	bool bTeamAxis(char* pModel)
 	{
 		if (strstr(pModel, "arab")
 			|| strstr(pModel, "opforce")
@@ -3371,7 +3397,7 @@ namespace D3D
 
 	}
 
-	bool bTeamAllies(char *pModel)
+	bool bTeamAllies(char* pModel)
 	{
 		if (strstr(pModel, "141")
 			|| strstr(pModel, "_us_")
@@ -3382,7 +3408,7 @@ namespace D3D
 		return false;
 	}
 
-	bool bWeapons(char *pModel)
+	bool bWeapons(char* pModel)
 	{
 		if (strstr(pModel, "mc/mtl") && (strstr(pModel, "weapon") ||
 			strstr(pModel, "betty")
@@ -3403,7 +3429,7 @@ namespace D3D
 		return false;
 	}
 
-	bool bHands(char *pModel)
+	bool bHands(char* pModel)
 	{
 		if (strstr(pModel, "viewmodel")
 			|| strstr(pModel, "ghillie")
@@ -3419,7 +3445,7 @@ namespace D3D
 		if (!g_bWasInitialized)
 			return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
 
-		if (_ReturnAddress() == (void *)0x004573B6) //R_DrawXModelSkinnedCached 
+		if (_ReturnAddress() == (void*)0x004573B6) //R_DrawXModelSkinnedCached 
 		{
 			if (!Settings[d3d_enabled].Value.bValue)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
@@ -3433,11 +3459,11 @@ namespace D3D
 			if (!model)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
 
-			char *pModel = **(char ***)(model + 0xB8);
+			char* pModel = **(char***)(model + 0xB8);
 			if (pModel == nullptr)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
 
-			if (Settings[d3d_nohands].Value.bValue && bHands(pModel))				
+			if (Settings[d3d_nohands].Value.bValue && bHands(pModel))
 				return D3D_OK;
 
 			/*if (Settings[d3d_tripmap].Value.bValue && texMap)
@@ -3475,7 +3501,7 @@ namespace D3D
 			else if (Settings[d3d_chams_wireframe].Value.bValue)
 				pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 		}
-		else if (_ReturnAddress() == (void *)/*the function: 0x0045C3B0*/0x0045C9D6) //weapons 0045C9D6: the retaddy
+		else if (_ReturnAddress() == (void*)/*the function: 0x0045C3B0*/0x0045C9D6) //weapons 0045C9D6: the retaddy
 		{
 			if (!Settings[d3d_enabled].Value.bValue)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
@@ -3488,7 +3514,7 @@ namespace D3D
 			if (!weapon)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
 
-			char *pModel = **(char ***)(weapon + 0xB8);
+			char* pModel = **(char***)(weapon + 0xB8);
 			if (pModel == nullptr)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
 
@@ -3538,7 +3564,7 @@ namespace D3D
 			else if (Settings[d3d_chams_wireframe].Value.bValue)
 				pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 		}
-		else if (_ReturnAddress() == (void *)/*the function: sub_458890*/0x00458AED)
+		else if (_ReturnAddress() == (void*)/*the function: sub_458890*/0x00458AED)
 		{
 			if (!Settings[d3d_enabled].Value.bValue)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
@@ -3546,7 +3572,7 @@ namespace D3D
 			if (!weapon)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
 
-			char *pModel = **(char ***)(weapon + 0xB8);
+			char* pModel = **(char***)(weapon + 0xB8);
 			if (pModel == nullptr)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
 
@@ -3580,7 +3606,7 @@ namespace D3D
 				}
 			}
 		}
-		else if (_ReturnAddress() == (void *)/*the function: sub_456290*/0x00456469)
+		else if (_ReturnAddress() == (void*)/*the function: sub_456290*/0x00456469)
 		{
 			if (!Settings[d3d_enabled].Value.bValue)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
@@ -3588,7 +3614,7 @@ namespace D3D
 			if (!smoke)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
 
-			char *pModel = **(char ***)(smoke + 0xB8);
+			char* pModel = **(char***)(smoke + 0xB8);
 			if (pModel == nullptr)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
 
@@ -3608,7 +3634,7 @@ namespace D3D
 				}
 			}
 		}
-		else if (_ReturnAddress() == (void *)/*the function: sub_456290*/0x45e2e0)
+		else if (_ReturnAddress() == (void*)/*the function: sub_456290*/0x45e2e0)
 		{
 			if (!Settings[d3d_enabled].Value.bValue)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
@@ -3616,7 +3642,7 @@ namespace D3D
 			if (!specialval)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
 
-			char *pModel = **(char ***)(specialval + 0xB8);
+			char* pModel = **(char***)(specialval + 0xB8);
 			if (pModel == nullptr)
 				return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
 
@@ -3635,7 +3661,7 @@ namespace D3D
 
 		return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
 	}
-	
+
 
 	HRESULT __stdcall DrawIndexedPrimitive_Stub(IDirect3DDevice9* pDevice, D3DPRIMITIVETYPE Type, INT BaseVertexIndex, UINT MinIndex, UINT NumVertices, UINT StartIndex, UINT PrimitiveCount)
 	{
@@ -3644,22 +3670,22 @@ namespace D3D
 		if (!g_bWasInitialized)
 		return OrigDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);*/
 
-		__asm 
+		__asm
 		{
 			push eax
 
 			mov eax, [esp + 0x40]; //0x3C(real) + 4 because of this push eax
 			mov model, eax
-			mov eax, [esp + 0x28] //looking for the struct in dip, before retaddress for weapons, yep, 0x24 + 4 cuz push eax., it works for sky/walls too.
-			mov weapon, eax
-			mov eax, [esp + 0x7C]; //0x78 + 4 cuz push eax
+				mov eax, [esp + 0x28] //looking for the struct in dip, before retaddress for weapons, yep, 0x24 + 4 cuz push eax., it works for sky/walls too.
+				mov weapon, eax
+				mov eax, [esp + 0x7C]; //0x78 + 4 cuz push eax
 			mov smoke, eax
-			mov eax, [esp + 0x24]
-			mov specialval, eax
-				
-			pop eax
+				mov eax, [esp + 0x24]
+				mov specialval, eax
 
-			jmp DrawIndexedPrimitiveHook
+				pop eax
+
+				jmp DrawIndexedPrimitiveHook
 		}
 
 		//It won't work like this & commented jmp instruction: return DrawIndexedPrimitiveHook(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, PrimitiveCount);
@@ -3908,12 +3934,12 @@ namespace D3D
 
 		PDWORD* pVTable = nullptr;
 		for (; pVTable == nullptr; SafeSleep(217))
-			pVTable = *reinterpret_cast<PDWORD **>(/*0x5FBCC28*/ 0x6664C60);		
+			pVTable = *reinterpret_cast<PDWORD**>(/*0x5FBCC28*/ 0x6664C60);
 
 		//Because: for vac banned users, 
 		//is possible to play after injecting that public bypass module that edit the window's game
 		while (!(g_hWindow = FindWindowA("IW4", 0)))
-			SafeSleep(/*217*/218);		
+			SafeSleep(/*217*/218);
 
 		g_pOldWindowProc =
 			reinterpret_cast<WNDPROC>(SetWindowLongPtr(g_hWindow, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(Hooked_WndProc)));
@@ -3921,27 +3947,27 @@ namespace D3D
 		pD3DHook = new CVMTHookManager;
 		if (g_pOldWindowProc && pD3DHook && pD3DHook->bInitialize(pVTable))
 		{
-			OrigDrawIndexedPrimitive = 
+			OrigDrawIndexedPrimitive =
 				reinterpret_cast<DrawIndexedPrimitive_t>(pD3DHook->dwHookMethod(reinterpret_cast<DWORD>(DrawIndexedPrimitive_Stub), INDEX_DIP));
 
-			OrigEndScene = 
+			OrigEndScene =
 				reinterpret_cast<EndScene_t>(pD3DHook->dwHookMethod(reinterpret_cast<DWORD>(EndSceneHook), INDEX_ENDSCENE));
 
-			OrigReset = 
+			OrigReset =
 				reinterpret_cast<Reset_t>(pD3DHook->dwHookMethod(reinterpret_cast<DWORD>(ResetHook), INDEX_RESET));
 
 			if (OrigDrawIndexedPrimitive &&
 				OrigEndScene &&
 				OrigReset)
-			{				
+			{
 				return true;
 			}
 			else
-			{				
+			{
 				pD3DHook->UnHook();
 				pD3DHook = nullptr;
 				SetWindowLongPtr(g_hWindow, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(g_pOldWindowProc));
-				
+
 				return false;
 			}
 		}

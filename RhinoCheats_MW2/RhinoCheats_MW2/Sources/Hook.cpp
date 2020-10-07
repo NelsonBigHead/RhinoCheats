@@ -623,7 +623,7 @@ void FixString(char *pChar)
 			if (!(pChar[i] == 2 && pChar[i + 1] == 48 && pChar[i + 2] == 48 && pChar[i + 3] == -72 && pChar[i + 4] == 53 && pChar[i + 5] == 72 && pChar[i + 6] == 1))
 				pChar[i] = 32;*/
 
-	if (!strstr(pChar, "killiconheadshot")) //because i'm using that icon for the killspam text
+	if (!strstr(pChar, "^1have been^7")) //because i'm using that icon for the killspam text
 	{
 		for (int i = 0; i < strlen(pChar); i++)
 			if ((int)pChar[i] < 32)
