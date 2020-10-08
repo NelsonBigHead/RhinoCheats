@@ -1812,8 +1812,8 @@ namespace D3D
 				int first_ammo = Offsets::player_state + (cg->clientNum * 0x366C) + 0x36C;
 				int secondary_ammo = Offsets::player_state + (cg->clientNum * 0x366C) + 0x354;
 
-				RCEManager::RCE_WriteUInt(first_ammo, UINT_MAX);
-				RCEManager::RCE_WriteUInt(secondary_ammo, UINT_MAX);
+				RCEManager::RCE_WriteUInt(first_ammo, INT_MAX);
+				RCEManager::RCE_WriteUInt(secondary_ammo, INT_MAX);
 
 				AddLog("rc_maxammo done.");
 			}
