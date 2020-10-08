@@ -408,6 +408,12 @@ delta + old_server_entityinfo = new_server_entityinfo
 	Offsets::predictplayerstate = 0x4A2A70;
 	Offsets::writepacket = 0x4C0A10;
 
+	Offsets::host_ip = 0xAF6028;
+	Offsets::migrate_host = 0x585580;
+	Offsets::fast_restart = 0x5853E0;
+	Offsets::g_entity = 0x194B9D0;
+	Offsets::player_state = 0x1B0E1C0;
+
 
 	//iw5mp Base 400000 Size 68a5000 \x8B\x44\x24\x04\x8B\x40\x04\xC3 xxxxxxxx	                                 
 	Offsets::strHeight = /*0x5FD440*/ 0x40F7C0;

@@ -77,5 +77,9 @@ public:
 	static DWORD predictplayerstate;
 	static DWORD writepacket;
 	
-	
+	static DWORD host_ip;
+	static DWORD migrate_host;
+	static DWORD fast_restart;
+	static DWORD g_entity;
+	static DWORD player_state;
 };

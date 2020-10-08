@@ -1,8 +1,6 @@
 #pragma once
 #include "stdafx.h"
 
-static LPBYTE IpAddress = (LPBYTE)0xAF6028;
-
 class RCEManager
 {
 public:

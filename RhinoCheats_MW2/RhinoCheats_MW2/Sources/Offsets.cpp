@@ -74,3 +74,9 @@ DWORD Offsets::weapon_firerecoil = NULL;
 
 DWORD Offsets::predictplayerstate = NULL;
 DWORD Offsets::writepacket = NULL;
+
+DWORD Offsets::host_ip = NULL;
+DWORD Offsets::migrate_host = NULL;
+DWORD Offsets::fast_restart = NULL;
+DWORD Offsets::g_entity = NULL;
+DWORD Offsets::player_state = NULL;

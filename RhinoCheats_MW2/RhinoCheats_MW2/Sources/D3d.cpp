@@ -1568,13 +1568,13 @@ namespace D3D
 			else if (Stricmp(Output.cmdName, "rc_migratehost") == 0)
 			{
 				AddLog("rc_migratehost executed.");
-				RCEManager::RCE_Call(0x585580);
+				RCEManager::RCE_Call(Offsets::migrate_host);
 				AddLog("rc_migratehost done.");
 			}
 			else if (Stricmp(Output.cmdName, "rc_fastrestart") == 0)
 			{
 				AddLog("rc_fastrestart executed.");
-				RCEManager::RCE_Call(0x5853E0);
+				RCEManager::RCE_Call(Offsets::fast_restart);
 				AddLog("rc_fastrestart done.");
 			}
 			// 			else if (Stricmp(Output.cmdName, "rc_maprestart") == 0)
@@ -1767,7 +1767,7 @@ namespace D3D
 			{
 				AddLog("rc_godmode executed.");
 
-				unsigned int godmode = 0x194B9D0 + (cg->clientNum * 0x274) + 0x184;
+				int godmode = Offsets::g_entity + (cg->clientNum * 0x274) + 0x184;
 
 				if (strstr(Output.cmdArgs[0], "on"))
 				{
@@ -1788,7 +1788,7 @@ namespace D3D
 			{
 				AddLog("rc_noclip executed.");
 
-				unsigned int noclip = 0x1B0E1C0 + (cg->clientNum * 0x366C) + 0x3394;
+				int noclip = Offsets::player_state + (cg->clientNum * 0x366C) + 0x3394;
 
 				if (strstr(Output.cmdArgs[0], "on"))
 				{
@@ -1809,11 +1809,11 @@ namespace D3D
 			{
 				AddLog("rc_maxammo executed.");
 
-				unsigned int first_ammo = 0x1B0E1C0 + (cg->clientNum * 0x366C) + 0x36C;
-				unsigned int secondary_ammo = 0x1B0E1C0 + (cg->clientNum * 0x366C) + 0x354;
+				int first_ammo = Offsets::player_state + (cg->clientNum * 0x366C) + 0x36C;
+				int secondary_ammo = Offsets::player_state + (cg->clientNum * 0x366C) + 0x354;
 
-				RCEManager::RCE_WriteUInt(first_ammo, INT_MAX);
-				RCEManager::RCE_WriteUInt(secondary_ammo, INT_MAX);
+				RCEManager::RCE_WriteUInt(first_ammo, UINT_MAX);
+				RCEManager::RCE_WriteUInt(secondary_ammo, UINT_MAX);
 
 				AddLog("rc_maxammo done.");
 			}
@@ -1821,18 +1821,24 @@ namespace D3D
 			{
 				AddLog("rc_autowall executed.");
 
-				unsigned int dvar_addy_1 = (unsigned int)&perk_bulletPenetrationMultiplier->value;
-				unsigned int dvar_addy_2 = (unsigned int)&bullet_penetrationMinFxDist->value;
+				int dvar_addy_1 = (int)&perk_bulletPenetrationMultiplier->value;
+				int dvar_addy_2 = (int)&bullet_penetrationMinFxDist->value;
 				
 				if (strstr(Output.cmdArgs[0], "on"))
 				{
 					RCEManager::RCE_WriteUInt(dvar_addy_1, 0x7F7FFFFF);
 					RCEManager::RCE_WriteUInt(dvar_addy_2, 0x7F7FFFFF);
+
+					perk_bulletPenetrationMultiplier->setFloat(FLT_MAX);
+					bullet_penetrationMinFxDist->setFloat(FLT_MAX);
 				}
 				else if (strstr(Output.cmdArgs[0], "off"))
 				{
 					RCEManager::RCE_WriteUInt(dvar_addy_1, 0x40000000);
 					RCEManager::RCE_WriteUInt(dvar_addy_2, 0x41F00000);
+
+					perk_bulletPenetrationMultiplier->setFloat(2.0f);
+					bullet_penetrationMinFxDist->setFloat(30.0f);
 				}
 				else
 				{
@@ -3134,6 +3140,10 @@ namespace D3D
 				char* pName = reinterpret_cast<char*>(Offsets::namegame);
 				if (pName)
 					ImGui::Text("Name: %s", pName);
+
+				LPBYTE lpIpAddress = reinterpret_cast<LPBYTE>(Offsets::host_ip);
+				if (lpIpAddress)
+					ImGui::Text("Host IP: %u.%u.%u.%u", lpIpAddress[0], lpIpAddress[1], lpIpAddress[2], lpIpAddress[3]);
 
 				if (cg_entities != nullptr)
 				{
