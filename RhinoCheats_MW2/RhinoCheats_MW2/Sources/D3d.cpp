@@ -1303,6 +1303,7 @@ namespace D3D
 
 				Commands.push_back("rc_godmode");
 				Commands.push_back("rc_noclip");
+				Commands.push_back("rc_superspeed");
 				Commands.push_back("rc_maxammo");
 				Commands.push_back("rc_autowall");
 				//Commands.push_back("rc_derank");
@@ -1405,12 +1406,13 @@ namespace D3D
 
 				AddLog("10. rc_godmode <on|off>\n\t\tGives you god mode (RCE).");
 				AddLog("11. rc_noclip <on|off>\n\t\tGives you no clip (RCE).");
-				AddLog("12. rc_maxammo\n\t\tGives you max ammo (RCE).");
-				AddLog("13. rc_autowall\n\t\tGives you host autowall (RCE).");
+				AddLog("12. rc_superspeed <on|off>\n\t\tGives you super speed (RCE).");
+				AddLog("13. rc_maxammo\n\t\tGives you max ammo (RCE).");
+				AddLog("14. rc_autowall\n\t\tGives you host autowall (RCE).");
 				//AddLog("10. rc_derank <id>\n\t\tDerank the player by id, (without id): Show the player list.");
 				//AddLog("11. rc_rerank <id>\n\t\tRerank the player by id, (without id): Show the player list.");
-				AddLog("14. disconnect\n\t\tDisconnect from the game.");
-				AddLog("15. quit\n\t\tQuit the game.");
+				AddLog("15. disconnect\n\t\tDisconnect from the game.");
+				AddLog("16. quit\n\t\tQuit the game.");
 
 			}ImGui::SameLine();
 			if (ImGui::SmallButton("Clear")) { ClearLog(); } ImGui::SameLine();
@@ -1805,6 +1807,27 @@ namespace D3D
 
 				AddLog("rc_noclip done.");
 			}
+			else if (Stricmp(Output.cmdName, "rc_superspeed") == 0)
+			{
+				AddLog("rc_superspeed executed.");
+
+				int superspeed = Offsets::player_state + (cg->clientNum * 0x366C) + 0x31C8;
+
+				if (strstr(Output.cmdArgs[0], "on"))
+				{
+					RCEManager::RCE_WriteUInt(superspeed, 0x40400000);
+				}
+				else if (strstr(Output.cmdArgs[0], "off"))
+				{
+					RCEManager::RCE_WriteUInt(superspeed, 0x3F800000);
+				}
+				else
+				{
+					AddLog("[error] the setting need to be on or off.");
+				}
+
+				AddLog("rc_superspeed done.");
+			}
 			else if (Stricmp(Output.cmdName, "rc_maxammo") == 0)
 			{
 				AddLog("rc_maxammo executed.");
@@ -1823,7 +1846,7 @@ namespace D3D
 
 				int dvar_addy_1 = (int)&perk_bulletPenetrationMultiplier->value;
 				int dvar_addy_2 = (int)&bullet_penetrationMinFxDist->value;
-				
+
 				if (strstr(Output.cmdArgs[0], "on"))
 				{
 					RCEManager::RCE_WriteUInt(dvar_addy_1, 0x7F7FFFFF);
