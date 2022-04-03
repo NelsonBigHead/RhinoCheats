@@ -201,8 +201,8 @@ namespace D3D
 			if (!pTex)
 			{
 				//Todo: move this to imgui
-				SafeMessageBox(HWND_DESKTOP,
-					STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.").c_str(), ALASKA17, MB_ICONWARNING);
+				//SafeMessageBox(HWND_DESKTOP,
+					//STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.").c_str(), ALASKA17, MB_ICONWARNING);
 
 				return result;
 			}
@@ -2061,8 +2061,8 @@ namespace D3D
 				D3DXCreateTextureFromFile(pDevice, texfile.c_str(), &texWeaponCustom);
 				if (!texWeaponCustom)
 				{
-					SafeMessageBox(HWND_DESKTOP,
-						STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.\nUsing normal textures.").c_str(), ALASKA17, MB_ICONWARNING);
+					//SafeMessageBox(HWND_DESKTOP,
+						//STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.\nUsing normal textures.").c_str(), ALASKA17, MB_ICONWARNING);
 				}
 			}
 
@@ -2076,8 +2076,8 @@ namespace D3D
 				D3DXCreateTextureFromFile(pDevice, texfile.c_str(), &texMap);
 				if (!texMap)
 				{
-					SafeMessageBox(HWND_DESKTOP,
-						STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.").c_str(), ALASKA17, MB_ICONWARNING);
+					//SafeMessageBox(HWND_DESKTOP,
+						//STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.").c_str(), ALASKA17, MB_ICONWARNING);
 				}
 			}
 

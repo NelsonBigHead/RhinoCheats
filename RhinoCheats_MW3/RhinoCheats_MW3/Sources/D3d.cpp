@@ -62,8 +62,8 @@ namespace D3D
 			if (!pTex)
 			{	
 				//Todo: move this to imgui
-				SafeMessageBox(HWND_DESKTOP,
-					STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.").c_str(), ALASKA17, MB_ICONWARNING);
+				//SafeMessageBox(HWND_DESKTOP,
+					//STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.").c_str(), ALASKA17, MB_ICONWARNING);
 						
 				return result;
 			}
@@ -2045,8 +2045,8 @@ namespace D3D
 				D3DXCreateTextureFromFile(pDevice, texfile.c_str(), &texWeaponCustom);
 				if (!texWeaponCustom)
 				{				
-					SafeMessageBox(HWND_DESKTOP, 
-						STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.\nUsing normal textures.").c_str(), ALASKA17, MB_ICONWARNING);
+					//SafeMessageBox(HWND_DESKTOP, 
+						//STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.\nUsing normal textures.").c_str(), ALASKA17, MB_ICONWARNING);
 				}
 			}
 
@@ -2060,8 +2060,8 @@ namespace D3D
 				D3DXCreateTextureFromFile(pDevice, texfile.c_str(), &texMap);
 				if (!texMap)
 				{					
-					SafeMessageBox(HWND_DESKTOP, 
-						STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.").c_str(), ALASKA17, MB_ICONWARNING);
+					//SafeMessageBox(HWND_DESKTOP, 
+						//STREAM(texfile << " not found.\nRemember that .jpg extension is also allowed.").c_str(), ALASKA17, MB_ICONWARNING);
 				}
 			}
 			
@@ -3027,7 +3027,7 @@ namespace D3D
 									ImGui::Checkbox("Claps everyone", &Settings[host_clap].Value.bValue);
 									ImGui::Checkbox("Rapid fire", &Settings[host_rapidfire].Value.bValue);
 									ImGui::SameLine(XmodSize);
-									ImGui::Checkbox("Sesh's bomb", &Settings[host_killstreak].Value.bValue);
+									ImGui::Checkbox("Rhino's bomb", &Settings[host_killstreak].Value.bValue);
 									ImGui::Checkbox("No clip", &Settings[host_noclip].Value.bValue);
 									ImGui::SameLine(XmodSize);
 									ImGui::Checkbox("Glitch guns", &Settings[host_glitchgun].Value.bValue);
